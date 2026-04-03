@@ -1,0 +1,25 @@
+.termBox {
+  background: var(--color-term-bg);
+  border-left: 3px solid var(--color-accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 14px 16px;
+  margin: 12px 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.term {
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.definition {
+  color: var(--color-text);
+}
+
+.termList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

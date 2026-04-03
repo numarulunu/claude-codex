@@ -1,0 +1,132 @@
+.container {
+  padding: 16px 0;
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  background: none;
+  padding: 8px 0;
+  margin-bottom: 16px;
+  transition: color 0.2s;
+}
+
+.backButton:hover {
+  color: var(--color-accent);
+}
+
+.moduleTitle {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.moduleDescription {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.progressBar {
+  margin-top: 16px;
+  background: var(--color-border);
+  border-radius: 100px;
+  height: 6px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 100px;
+  transition: width 0.4s ease;
+}
+
+.lessons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lessonItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.lessonItem:hover:not(.locked) {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.lessonItem.completed {
+  opacity: 0.7;
+}
+
+.lessonItem.current {
+  border-color: var(--color-accent);
+  background: var(--color-surface);
+}
+
+.lessonItem.locked {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.lessonNumber {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.lessonItem.completed .lessonNumber {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.lessonItem.current .lessonNumber {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.lessonInfo {
+  flex: 1;
+}
+
+.lessonTitle {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.lessonType {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-transform: capitalize;
+}
+
+.lessonCheck {
+  color: var(--color-success);
+  font-size: 18px;
+}

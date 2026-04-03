@@ -1,0 +1,64 @@
+<h2>Architecture Approaches</h2>
+<p class="subtitle">How should we structure Duolingo-for-Claude under the hood?</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Single-Page App (SPA)</h3>
+      <p>One HTML file. All 8 modules, lessons, and game logic live in a single page. JavaScript handles routing, transitions, and state. Feels like an app.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Instant navigation, no page reloads</li>
+          <li>Smooth Duolingo-like transitions and animations</li>
+          <li>One file to deploy</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Gets complex fast with 8 modules × many lessons</li>
+          <li>All content loads upfront (can get heavy)</li>
+          <li>Harder to maintain and extend</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Multi-Page Static + Shared Shell</h3>
+      <p>Each module gets its own HTML file. A shared CSS/JS shell handles the Duolingo-style chrome (sidebar, XP bar, progress). Lessons defined as JSON data files, rendered by a shared lesson engine.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Clean separation: content (JSON) vs presentation (HTML/JS)</li>
+          <li>Easy to add lessons — just edit a JSON file</li>
+          <li>Each page loads only what it needs</li>
+          <li>Curriculum is data, not code</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Page transitions aren't as seamless</li>
+          <li>More files to manage</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>SPA + JSON Curriculum (Recommended)</h3>
+      <p>Single-page app shell for the Duolingo experience. All curriculum content lives in JSON data files (one per module). The app loads modules on demand. Best of both worlds.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>App-like feel with smooth transitions</li>
+          <li>Content separated from code — add lessons by editing JSON</li>
+          <li>Lazy-loads modules (fast initial load)</li>
+          <li>progress.json sits alongside curriculum data</li>
+          <li>Scales to a product without rewriting</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Slightly more upfront JS architecture</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div>

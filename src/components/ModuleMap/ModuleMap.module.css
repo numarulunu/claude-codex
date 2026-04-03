@@ -1,0 +1,136 @@
+.map {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 0 64px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--color-text);
+}
+
+.subtitle {
+  font-size: 15px;
+  color: var(--color-text-muted);
+  margin-bottom: 48px;
+}
+
+.path {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  position: relative;
+}
+
+.connector {
+  width: 3px;
+  height: 40px;
+  background: var(--color-border);
+}
+
+.connector.completed {
+  background: var(--color-accent);
+}
+
+.node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.node:hover:not(.locked) {
+  transform: scale(1.05);
+}
+
+.nodeCircle {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-card);
+  border: 3px solid var(--color-border);
+  font-size: 28px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.current .nodeCircle {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px rgba(217, 119, 87, 0.2);
+}
+
+.completed .nodeCircle {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.locked .nodeCircle {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.checkmark {
+  color: #fff;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.lockIcon {
+  font-size: 20px;
+  color: var(--color-text-muted);
+  opacity: 0.5;
+}
+
+.ringOverlay {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+}
+
+.nodeInfo {
+  text-align: left;
+}
+
+.nodeNumber {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--color-text-muted);
+  margin-bottom: 2px;
+}
+
+.nodeTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.locked .nodeTitle {
+  color: var(--color-text-muted);
+}
+
+.nodeProgress {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.node:nth-child(4n+1) {
+  align-self: center;
+}
+.node:nth-child(4n+3) {
+  align-self: center;
+  flex-direction: row-reverse;
+}
+.node:nth-child(4n+3) .nodeInfo {
+  text-align: right;
+}

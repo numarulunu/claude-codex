@@ -1,0 +1,19 @@
+.ring {
+  transform: rotate(-90deg);
+}
+
+.trackCircle {
+  fill: none;
+  stroke: var(--color-border);
+}
+
+.progressCircle {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.completed .progressCircle {
+  stroke: var(--color-success);
+}

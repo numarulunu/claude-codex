@@ -1,0 +1,58 @@
+.codeBlock {
+  position: relative;
+  margin: 16px 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background: var(--color-code-bg);
+  border: 1px solid var(--color-border);
+  border-bottom: none;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.copyButton {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  transition: all 0.2s;
+}
+
+.copyButton:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.copied {
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.pre {
+  margin: 0;
+  padding: 16px;
+  background: var(--color-code-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.annotation {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-style: italic;
+  line-height: 1.5;
+}

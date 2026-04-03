@@ -1,0 +1,62 @@
+[
+  {
+    "id": "01-cli-fundamentals",
+    "title": "CLI Fundamentals",
+    "description": "Installation, commands, CLAUDE.md, memory, settings, permissions, models, and cost management.",
+    "lessonCount": 14
+  },
+  {
+    "id": "02-prompt-engineering",
+    "title": "Prompt Engineering for CLI",
+    "description": "Structured prompts, context management, multi-turn strategies, and output control.",
+    "lessonCount": 12
+  },
+  {
+    "id": "03-hooks-automation",
+    "title": "Hooks & Automation Inside Claude",
+    "description": "Event hooks, tool matchers, security gates, and automated workflows within Claude Code.",
+    "lessonCount": 8
+  },
+  {
+    "id": "04-skills-plugins",
+    "title": "Skills & Plugins",
+    "description": "Custom skills, YAML frontmatter, plugin manifests, and the plugin ecosystem.",
+    "lessonCount": 10
+  },
+  {
+    "id": "05-mcp-servers",
+    "title": "MCP Servers",
+    "description": "Model Context Protocol — connecting Claude to external tools and services.",
+    "lessonCount": 11
+  },
+  {
+    "id": "06-subagents",
+    "title": "Subagents",
+    "description": "Dispatching workers, parallel execution, orchestration patterns, and agent teams.",
+    "lessonCount": 12
+  },
+  {
+    "id": "07-scripts-pipelines",
+    "title": "Claude in Scripts & Pipelines",
+    "description": "The --print flag, JSON output, shell piping, batch processing, and CI/CD.",
+    "lessonCount": 8
+  },
+  {
+    "id": "08-n8n-integration",
+    "title": "n8n Integration",
+    "description": "Claude as an n8n node, and Claude as the builder of n8n workflows.",
+    "lessonCount": 12
+  },
+  {
+    "id": "09-business-automation",
+    "title": "Business Automation Templates",
+    "description": "Student onboarding, scheduling, invoicing, leads, SOPs, and Skool workflows.",
+    "lessonCount": 10
+  },
+  {
+    "id": "10-content-pipelines",
+    "title": "Content Production Pipelines",
+    "description": "YouTube scripts, social media batching, newsletters, repurposing, and content calendars.",
+    "lessonCount": 8
+  }
+]
