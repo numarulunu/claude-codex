@@ -1,0 +1,281 @@
+[
+  {
+    "id": "cli-01-01",
+    "title": "What is Claude Code (and How It Differs from Chat)",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "Claude Code is a command-line tool that runs inside your terminal — the same place developers type commands like `git` or `npm`. Unlike claude.ai, which is a chatbot you talk to in a browser window, Claude Code lives right where your code lives. It can see your files, search through your project, run commands, and edit code directly. Think of claude.ai as a phone call with a smart friend, and Claude Code as that friend sitting next to you at your computer, able to actually touch the keyboard.\n\nThe big difference is \"tool use.\" When you chat with Claude on the web, it can only read what you paste in and write text back. Claude Code has real tools: it can read any file on your machine, search your entire codebase with regex, run terminal commands like `npm test` or `python app.py`, and make precise edits to your source files. It doesn't just suggest changes — it makes them.\n\nThis means Claude Code works best when you point it at a real project. Open your terminal, navigate to a project folder, and type `claude`. From that moment, Claude can see everything in that directory and help you build, debug, refactor, or explore. It's an AI that has hands, not just a mouth.",
+      "terminology": [
+        { "term": "CLI", "definition": "Command-Line Interface — a text-based way to interact with your computer by typing commands instead of clicking buttons." },
+        { "term": "Terminal", "definition": "The application where you type CLI commands. On Mac it's called Terminal, on Windows it's Windows Terminal or PowerShell, and on Linux it's usually called a terminal emulator." },
+        { "term": "Tool Use", "definition": "The ability for an AI to take actions beyond just generating text — like reading files, running commands, or editing code." }
+      ]
+    }
+  },
+  {
+    "id": "cli-01-02",
+    "title": "Installing and Launching Claude Code",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "Claude Code is installed through npm, the Node.js package manager. You need Node.js version 18 or higher on your machine. If you don't have Node.js yet, grab it from nodejs.org — the LTS (Long Term Support) version is the safe choice. Once Node.js is installed, you get npm for free.\n\nThe install command is global, meaning it puts `claude` on your system PATH so you can run it from any folder. Open your terminal and run: `npm install -g @anthropic-ai/claude-code`. The `-g` flag means \"install globally\" — without it, the tool would only be available inside one project folder. On Mac/Linux you might need `sudo` in front if you get a permissions error.\n\nAfter installation, just type `claude` and hit Enter. The first time you run it, Claude Code walks you through authentication — you'll log in with your Anthropic account or connect an API key. Once authenticated, you're dropped into an interactive session where you can start typing prompts. You'll see a `>` prompt waiting for your input. That's it — you're in.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Install Claude Code globally\nnpm install -g @anthropic-ai/claude-code\n\n# Launch it from any project folder\ncd ~/my-project\nclaude",
+        "annotation": "The first command installs Claude Code so it's available everywhere. The second navigates to your project, and the third starts an interactive session."
+      },
+      "exercise": {
+        "instruction": "Install Claude Code using the npm command above, then launch it by typing `claude` in your terminal. Confirm that you see the interactive prompt.",
+        "inputType": "confirm"
+      }
+    }
+  },
+  {
+    "id": "cli-01-03",
+    "title": "Your First Conversation in the Terminal",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "Once you're inside a Claude Code session, you can type prompts just like chatting — but watch what happens underneath. When you ask Claude to do something with your files, you'll see it call tools. For example, if you say \"read the file package.json,\" Claude will invoke the Read tool, and you'll see output showing the file contents right in your terminal.\n\nTool calls look different from plain text responses. You'll see labels like `Read(package.json)` or `Bash(npm test)` followed by the output. This is Claude showing its work — you can see exactly what it's reading, running, or changing. Nothing happens silently. Every action is visible, and destructive actions (like editing files or running commands) require your permission first.\n\nTry asking Claude to read a file in your current project. If you don't have a project handy, even asking it to read a simple text file works. Watch the tool call appear, see the file contents stream in, and then read Claude's analysis of what it found. That feedback loop — you ask, Claude acts, you see results — is the core of working with Claude Code.",
+      "codeExample": {
+        "language": "bash",
+        "code": "> read the file package.json and tell me what dependencies this project uses",
+        "annotation": "This is what you type at the Claude Code prompt. Claude will call the Read tool on package.json and then summarize the dependencies it finds."
+      },
+      "exercise": {
+        "instruction": "In your Claude Code session, ask Claude to read any file in your project. Paste the output you see, including the tool call label (e.g., 'Read(filename)').",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 20,
+          "errorMessage": "Your response seems too short. Paste the actual output you see from Claude Code, including the tool call and file contents."
+        }
+      }
+    }
+  },
+  {
+    "id": "cli-01-04",
+    "title": "The Conversation Loop — How Context Works",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "Every Claude Code session has a \"context window\" — think of it as Claude's short-term memory for this conversation. Everything you type, every response Claude gives, every file it reads, and every command output it sees gets added to this context window. It's measured in tokens (roughly 1 token = 0.75 words), and current models support around 200,000 tokens.\n\nHere's the catch: when the context window fills up, Claude can't just keep adding more. Older parts of the conversation get compressed or dropped. This is called compaction, and you can trigger it manually with the `/compact` command. When you run `/compact`, Claude summarizes the conversation so far into a condensed version, freeing up space for new work. It's like taking notes on a meeting instead of recording every word.\n\nThis has practical implications. If you're working on a big task, the early parts of your conversation will eventually fade from Claude's memory. That's why breaking work into focused sessions is smart — each session gets a fresh, full context window. You can also use `/compact` strategically: after finishing one subtask, compact the context before moving to the next one. The `/context` command shows you a visual bar of how full your context window is, so you always know where you stand.",
+      "terminology": [
+        { "term": "Context Window", "definition": "The total amount of text (measured in tokens) that Claude can hold in memory during a single conversation session." },
+        { "term": "Tokens", "definition": "The basic units that language models process. One token is roughly 3/4 of a word in English. Code tends to use more tokens per line than prose." },
+        { "term": "Compaction", "definition": "The process of summarizing a conversation to free up context window space. Triggered automatically when context fills up, or manually with /compact." }
+      ]
+    }
+  },
+  {
+    "id": "cli-01-05",
+    "title": "Your First CLAUDE.md",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "CLAUDE.md is a special markdown file that Claude Code reads automatically at the start of every session. It's your way of giving Claude persistent instructions — rules, preferences, and context that should apply every time you work on this project. Without it, you'd have to repeat yourself at the start of each session.\n\nYou can place CLAUDE.md in several locations. A CLAUDE.md in your project root applies to that project. A CLAUDE.md in `~/.claude/` applies to every project you open (your global instructions). Claude reads all of them, layering project-specific rules on top of your global ones. The file is plain Markdown, so you can use headers, bullet points, and code blocks to organize your rules.\n\nA good CLAUDE.md is short and directive. Don't write essays — write rules. Tell Claude what tech stack you use, what coding conventions to follow, what files are important, and what to avoid. Think of it as onboarding notes for a new team member who'll be helping you code every day.",
+      "codeExample": {
+        "language": "markdown",
+        "code": "# Project Rules\n\n## Tech Stack\n- React 19 + TypeScript\n- Tailwind CSS for styling\n- Vitest for testing\n\n## Conventions\n- Use functional components only, no class components\n- All files use .tsx extension for components\n- Write tests for every new utility function\n\n## Important Paths\n- Components live in src/components/\n- API routes live in src/api/\n- Shared types in src/types/",
+        "annotation": "A real CLAUDE.md file. Save this in your project root. Claude reads it automatically at the start of every session and follows these rules."
+      },
+      "exercise": {
+        "instruction": "Create a CLAUDE.md file in the root of one of your projects (or in ~/.claude/ for global rules). Write at least 5 rules that are specific and useful. Paste the contents here.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 50,
+          "errorMessage": "Your CLAUDE.md seems too short. Include at least 5 specific rules — things like your tech stack, coding conventions, important file paths, or things to avoid."
+        }
+      }
+    }
+  },
+  {
+    "id": "cli-01-06",
+    "title": "Reading Files, Searching Code, Navigating Projects",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "Claude Code has three main tools for exploring your codebase: Read, Grep, and Glob. Each one does something different, and knowing which to use saves time.\n\nThe **Read** tool reads a specific file when you know its path. Ask Claude to \"read src/index.ts\" and it fetches the entire file (or a range of lines for large files). The **Grep** tool searches inside files for text patterns — it's powered by ripgrep, so it's fast even on huge codebases. Ask Claude to \"search for all uses of useState\" and it'll find every matching line across your project. The **Glob** tool finds files by name pattern. Ask \"find all .test.ts files\" and it returns a list of matching paths, sorted by modification time.\n\nIn practice, you rarely name these tools directly. Just describe what you want in plain English: \"find all files that import the Button component,\" \"show me the database configuration,\" or \"what files were changed recently?\" Claude picks the right tool automatically. The key insight is that Claude can chain these tools: first Glob to find relevant files, then Read to look at the important ones, then Grep to cross-reference specific patterns.",
+      "codeExample": {
+        "language": "bash",
+        "code": "> find all .jsx files in the components folder\n# Claude uses Glob(\"src/components/**/*.jsx\")\n\n> search for any file that exports a function called 'calculateTotal'\n# Claude uses Grep(\"export.*function calculateTotal\")\n\n> read the README\n# Claude uses Read(\"README.md\")",
+        "annotation": "You type plain English prompts. Claude translates them into the right tool calls automatically. The comments show which tool Claude uses under the hood."
+      }
+    }
+  },
+  {
+    "id": "cli-01-07",
+    "title": "Running Commands Through Claude",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "Claude Code can run terminal commands through its Bash tool. This means it can do anything you could do in your terminal: run tests, install packages, start servers, check git status, compile code, or run scripts. When Claude needs to run a command, it shows you exactly what it wants to execute and waits for your permission before running it.\n\nThe permission prompt is a safety feature. You'll see something like `Claude wants to run: npm test` with options to Allow or Deny. For read-only commands like `ls` or `git status`, you can set up auto-approval so Claude doesn't have to ask every time. For commands that could change things — like `rm`, `git push`, or install commands — it's smart to review each one. You can also allow specific commands permanently by adding them to your settings.\n\nThis is where Claude Code becomes genuinely powerful. Instead of copying error messages, pasting them into a chat, getting suggestions, and manually applying them — Claude can run the failing test, read the error, find the broken code, fix it, and re-run the test to verify. The entire debug loop happens in one conversation.",
+      "codeExample": {
+        "language": "bash",
+        "code": "> run the test suite and fix any failures\n# Claude runs: npm test\n# Sees 2 failing tests\n# Reads the test files and source code\n# Edits the source to fix the bug\n# Re-runs: npm test\n# All tests pass\n\n> what's the git status?\n# Claude runs: git status\n# Shows you modified and untracked files",
+        "annotation": "Claude chains Bash commands with Read and Edit tools to complete multi-step tasks. Each command execution requires your permission unless you've configured auto-approval."
+      }
+    }
+  },
+  {
+    "id": "cli-01-08",
+    "title": "Understanding Tool Use and Permissions",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "Claude Code operates through a defined set of tools, each with a specific job. The core tools are: **Read** (view file contents), **Write** (create new files), **Edit** (modify existing files with surgical precision), **Bash** (run terminal commands), **Glob** (find files by name pattern), **Grep** (search file contents), and **Agent** (spawn a sub-agent for parallel tasks). Every action Claude takes uses one of these tools — there's no hidden magic.\n\nThe permission system is your safety net. By default, Claude can freely use read-only tools (Read, Glob, Grep) but must ask permission for anything that changes your system (Write, Edit, Bash). When Claude wants to edit a file or run a command, you see a permission prompt showing exactly what it wants to do. You can approve once, approve for the session, or deny it.\n\nYou can customize permissions in your settings to match your comfort level. For example, you might allow `git status` and `npm test` to run without asking, but require approval for `git push` or any file edits. The permission system is granular — you can allow specific commands, specific file patterns, or entire tool categories. This lets you dial in the right balance between speed (not being asked constantly) and safety (keeping control of destructive actions).",
+      "terminology": [
+        { "term": "Tool Use", "definition": "Each action Claude takes — reading a file, editing code, running a command — is a discrete 'tool call' with a name, inputs, and outputs." },
+        { "term": "Permission Prompt", "definition": "The confirmation dialog that appears when Claude wants to perform a potentially destructive action. Shows exactly what Claude wants to do and lets you approve or deny." },
+        { "term": "Sandbox", "definition": "A restricted execution environment. Claude Code's Bash tool runs in a sandbox that prevents certain dangerous operations by default." }
+      ]
+    }
+  },
+  {
+    "id": "cli-01-09",
+    "title": "Permission Modes — default, plan, auto, and more",
+    "type": "quiz",
+    "xp": 10,
+    "bonusXp": 5,
+    "content": {
+      "explanation": "Claude Code has several permission modes that control how much autonomy Claude gets. You set the mode when launching Claude or change it during a session.\n\n**Default mode** is what you start with. Claude can read files freely but asks permission before editing files or running commands. This is the safest mode for getting started — you see everything before it happens.\n\n**Plan mode** makes Claude read-only. It can explore your codebase, analyze code, and make recommendations, but it cannot edit any files or run any commands. This is useful when you want Claude to audit or review code without any risk of changes.\n\n**Auto mode** gives Claude more freedom. It uses a safety classifier to decide which actions are safe to run without asking. Read-only commands and safe edits go through automatically, while potentially dangerous operations still require approval. This is the productivity sweet spot for experienced users.\n\n**acceptEdits mode** auto-approves file edits but still asks before running Bash commands. This is handy when you trust Claude's code changes but want to review every command execution.",
+      "exercise": {
+        "instruction": "Which permission mode would you use if you want Claude to analyze your codebase and suggest improvements, but you do NOT want it to make any changes to files or run any commands?",
+        "inputType": "multipleChoice",
+        "choices": [
+          {
+            "text": "Default mode",
+            "correct": false,
+            "explanation": "Default mode does ask before making changes, but it still allows edits and commands after you approve. Plan mode prevents them entirely."
+          },
+          {
+            "text": "Plan mode",
+            "correct": true,
+            "explanation": "Correct! Plan mode is read-only. Claude can explore and analyze your code but cannot edit files or run commands at all, even with approval."
+          },
+          {
+            "text": "Auto mode",
+            "correct": false,
+            "explanation": "Auto mode actually gives Claude more autonomy, not less. It auto-approves safe actions without asking. That's the opposite of what you want here."
+          },
+          {
+            "text": "acceptEdits mode",
+            "correct": false,
+            "explanation": "acceptEdits mode auto-approves file edits without asking — it gives Claude more editing freedom, not less."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "cli-01-10",
+    "title": "The Memory System — MEMORY.md and Auto Memory",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "Claude Code has a memory system that persists information across sessions. While CLAUDE.md contains rules you write manually, the memory system stores things Claude learns while working with you — patterns it discovers in your codebase, decisions you've made together, and facts about your project that would be useful later.\n\nThe main memory file is MEMORY.md, stored in `~/.claude/projects/<project-hash>/memory/`. This file acts as an index, and related topic files store detailed notes. When Claude discovers something important — like \"this project uses a custom ORM\" or \"the user prefers named exports over default exports\" — it can save that to memory. Next session, Claude reads these memory files and starts with that context already loaded.\n\nYou can manage memory with the `/memory` command inside a Claude Code session. This lets you view what Claude has stored, edit entries, or delete things that are no longer accurate. You can also tell Claude directly: \"remember that we decided to use PostgreSQL instead of MySQL\" and it will store that fact. The memory system turns Claude from a tool that forgets everything between sessions into one that builds up project knowledge over time.",
+      "terminology": [
+        { "term": "Auto Memory", "definition": "Claude Code's ability to automatically save important learnings and decisions to persistent memory files that survive across sessions." },
+        { "term": "MEMORY.md", "definition": "The index file for Claude Code's persistent memory. Lives in the project-specific memory directory and references topic-specific memory files." },
+        { "term": "Session Persistence", "definition": "The ability to carry information from one Claude Code session to the next, achieved through CLAUDE.md rules and the memory system." }
+      ]
+    }
+  },
+  {
+    "id": "cli-01-11",
+    "title": "Settings and Configuration",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "Claude Code's behavior is controlled by `settings.json` files. There are two scopes: user-level settings at `~/.claude/settings.json` (applies to all projects) and project-level settings at `.claude/settings.json` in your project root (applies only to that project). Project settings override user settings where they conflict.\n\nThe most useful settings control which tools are allowed to run without permission prompts. The `allowedTools` array lets you specify exact commands or patterns that Claude can execute freely. For example, allowing `Bash(git status)` means Claude won't ask permission every time it wants to check git status. You can also set default models, configure API keys for different providers, and control behavior like auto-compaction thresholds.\n\nSettings are plain JSON, so you can edit them with any text editor or ask Claude to modify them for you. The project-level settings file (`.claude/settings.json`) can be committed to version control, so your whole team shares the same Claude Code configuration. This is powerful for consistency — everyone on the team gets the same allowed tools, the same conventions, and the same safety guardrails.",
+      "codeExample": {
+        "language": "json",
+        "code": "{\n  \"permissions\": {\n    \"allowedTools\": [\n      \"Bash(git status)\",\n      \"Bash(git diff)\",\n      \"Bash(npm test)\",\n      \"Bash(npm run lint)\",\n      \"Read\",\n      \"Glob\",\n      \"Grep\"\n    ]\n  },\n  \"preferences\": {\n    \"autoCompact\": true\n  }\n}",
+        "annotation": "A settings.json file that auto-approves common read-only git commands, test/lint runs, and all read tools. Save this at ~/.claude/settings.json for user-level or .claude/settings.json for project-level."
+      }
+    }
+  },
+  {
+    "id": "cli-01-12",
+    "title": "Model Selection — Opus, Sonnet, Haiku",
+    "type": "quiz",
+    "xp": 10,
+    "bonusXp": 5,
+    "content": {
+      "explanation": "Claude Code supports multiple models, and choosing the right one for the task saves both time and money. The three main models are Opus, Sonnet, and Haiku — named from most capable to most lightweight.\n\n**Opus** is the most powerful model. It excels at complex reasoning, large refactors, architectural decisions, and tasks that require understanding many files at once. It's slower and costs more per token, so you use it when the task genuinely needs deep thinking.\n\n**Sonnet** is the balanced workhorse. It's fast, capable, and significantly cheaper than Opus. For most day-to-day coding — writing functions, fixing bugs, writing tests, explaining code — Sonnet handles it well. This is your default for routine work.\n\n**Haiku** is the speed demon. It's the fastest and cheapest model, great for simple tasks like generating boilerplate, renaming variables, formatting code, or quick lookups. It won't handle complex multi-file reasoning well, but it's perfect when you need a fast answer.\n\nYou switch models mid-session with the `/model` command. The `/effort` command adjusts how much thinking a model does — you can set it to low, medium, or high. Low effort with Sonnet is great for trivial tasks; high effort with Opus is for the hardest problems.",
+      "exercise": {
+        "instruction": "You need to refactor a complex authentication system that spans 12 files, with intricate security logic and edge cases. Which model should you use?",
+        "inputType": "multipleChoice",
+        "choices": [
+          {
+            "text": "Haiku — it's the fastest, so you'll get results quicker",
+            "correct": false,
+            "explanation": "Haiku is fast but not built for complex multi-file reasoning. A 12-file security refactor with edge cases needs deep understanding — Haiku would miss critical details."
+          },
+          {
+            "text": "Sonnet — it's the balanced option and handles most tasks",
+            "correct": false,
+            "explanation": "Sonnet is great for most work, but a complex security refactor across 12 files with intricate edge cases is exactly the kind of task where Opus's superior reasoning pays off."
+          },
+          {
+            "text": "Opus — it has the strongest reasoning for complex, multi-file tasks",
+            "correct": true,
+            "explanation": "Correct! Opus excels at exactly this: complex reasoning across many files with security-critical logic. The extra cost is justified when mistakes have real consequences."
+          },
+          {
+            "text": "It doesn't matter — all models produce identical results",
+            "correct": false,
+            "explanation": "Models have genuinely different capabilities. Opus handles complexity and nuance that smaller models miss. Model selection is a real engineering decision."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "cli-01-13",
+    "title": "Cost Awareness — /cost, /context, Token Management",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "Claude Code uses API tokens, and tokens cost money. Being aware of your usage isn't just about saving cash — it's about working efficiently. The `/cost` command shows you how many tokens you've used in the current session and the estimated dollar cost. Run it periodically to understand how different tasks consume tokens.\n\nThe `/context` command shows a visual representation of your context window — how full it is and what's taking up space. Large file reads and long command outputs eat context fast. If you see your context window getting full, run `/compact` to summarize and free up space. The `/stats` command gives you broader usage patterns over time.\n\nPractical cost management comes down to a few habits. Use Sonnet for routine work and reserve Opus for genuinely complex tasks. Use `/compact` after finishing subtasks to keep your context lean. Be specific in your prompts — \"fix the bug in src/auth/login.ts on line 42\" uses far fewer tokens than \"something is broken in the login system, can you find and fix it?\" because Claude doesn't have to search your entire codebase. Reading targeted file ranges instead of entire large files also helps.",
+      "codeExample": {
+        "language": "bash",
+        "code": "> /cost\n# Session tokens: 45,230 | Estimated cost: $0.12\n\n> /context\n# [████████░░░░░░░░░░░░] 42% used (85K / 200K tokens)\n\n> /compact\n# Compacting conversation... saved 35K tokens",
+        "annotation": "These slash commands help you monitor and manage your token usage. Run /cost to see spending, /context to see how full your memory is, and /compact to free up space."
+      },
+      "exercise": {
+        "instruction": "In a Claude Code session, run either `/cost` or `/context` and paste the output here. This helps you build the habit of checking your token usage.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 10,
+          "errorMessage": "Paste the output from /cost or /context. Even a short output counts — we just want to see you ran the command."
+        }
+      }
+    }
+  },
+  {
+    "id": "cli-01-14",
+    "title": "Capstone: Set Up Claude Code on a Real Project",
+    "type": "build",
+    "xp": 25,
+    "content": {
+      "explanation": "Time to put everything together. In this capstone, you'll set up Claude Code on a real project from scratch — creating configuration files, exploring the codebase with Claude's tools, and verifying everything works. This mirrors exactly what you'd do on day one of using Claude Code at work or on a personal project.\n\nPick any project you have on your machine. It could be a side project, a work repo, a tutorial you followed, or even a fresh `create-react-app`. The point is to practice the full setup flow: launch Claude Code in the project directory, create a CLAUDE.md with real rules for that project, and verify Claude can navigate and understand your codebase.\n\nAfter this capstone, you'll have a project fully configured for Claude Code. Every future session on this project will benefit from the CLAUDE.md you create and the memory Claude builds. This is the foundation everything else in Claude Codex builds on.",
+      "exercise": {
+        "instruction": "Complete the following checklist to set up Claude Code on a real project. Check off each step as you finish it.",
+        "inputType": "confirm",
+        "steps": [
+          "Navigate to a real project folder in your terminal and launch Claude with the `claude` command",
+          "Create a CLAUDE.md in the project root with at least 5 rules specific to that project (tech stack, conventions, important paths, things to avoid)",
+          "Ask Claude to read and summarize a key file in the project (like package.json, main entry point, or config file)",
+          "Ask Claude to search for something specific in your codebase (e.g., all files that import a certain module, or all TODO comments)",
+          "Run /cost to check your token usage for this session",
+          "Run /model to see which model you're currently using",
+          "Ask Claude a question to verify it follows one of the rules from your CLAUDE.md"
+        ]
+      }
+    }
+  }
+]
