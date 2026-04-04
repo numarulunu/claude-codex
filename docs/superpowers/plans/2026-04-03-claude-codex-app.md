@@ -99,7 +99,7 @@ claude-codex/
 
 Run:
 ```bash
-cd "/c/Users/Gaming PC/Desktop/Claude/Claude Codex"
+cd ~/Claude/Claude\ Codex
 npm init -y
 ```
 
