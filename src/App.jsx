@@ -1,6 +1,7 @@
 import { ThemeProvider } from './context/ThemeContext'
 import { ProgressProvider } from './context/ProgressContext'
 import { useRouter } from './hooks/useRouter'
+import ErrorBoundary from './ErrorBoundary'
 import TopBar from './components/TopBar/TopBar'
 import ModuleMap from './components/ModuleMap/ModuleMap'
 import LessonList from './components/LessonList/LessonList'
@@ -41,10 +42,12 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <ProgressProvider>
-        <AppContent />
-      </ProgressProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <ProgressProvider>
+          <AppContent />
+        </ProgressProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   )
 }
