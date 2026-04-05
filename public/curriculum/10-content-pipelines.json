@@ -1,0 +1,248 @@
+[
+  {
+    "id": "cp-10-01",
+    "title": "Content Strategy with Claude — Ideation to Publish",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "Content strategy is deciding what to create, for whom, and how often — before you create anything. Most creators skip this step and post randomly, which leads to burnout and inconsistency. Claude can build your entire content strategy in a single session.\n\nThe foundation is content pillars — 3-5 core topics that everything you publish revolves around. For a vocal coaching business, your pillars might be: technique education, student transformations, behind-the-scenes of coaching, myth-busting common vocal advice, and industry commentary.\n\nNext comes format and cadence. Which platforms are you on? YouTube, Skool, Instagram, email? Each platform has a native format. Claude can map your pillars to platforms and suggest a realistic publishing schedule.\n\nThe full pipeline: ideate, outline, draft, review, publish, repurpose. This module teaches you to build and run that pipeline.",
+      "terminology": [
+        {
+          "term": "Content Pillars",
+          "definition": "The 3-5 core topics that all your content revolves around."
+        },
+        {
+          "term": "Content Cadence",
+          "definition": "How often you publish on each platform — daily, weekly, biweekly."
+        },
+        {
+          "term": "Content Pipeline",
+          "definition": "Step-by-step process from idea to published content: ideate, outline, draft, review, publish, repurpose."
+        }
+      ]
+    }
+  },
+  {
+    "id": "cp-10-02",
+    "title": "YouTube Script Generation Pipeline",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "A YouTube video starts long before you hit record. The script is where 80% of the quality lives. A good script has a hook (first 30 seconds), a promise, the body, and a call to action. Claude can generate all of this from a single topic.\n\nThe workflow is iterative. Step 1: topic and audience. Step 2: Claude generates 3-5 hooks, you pick the strongest. Step 3: full outline with timestamps. Step 4: expand each section into conversational script. Step 5: read aloud, mark unnatural parts, Claude rewrites.\n\nClaude is a writing partner, not a ghostwriter. Give Claude examples of how you talk. The goal is a 10-minute video script in under 30 minutes.",
+      "terminology": [
+        {
+          "term": "Hook",
+          "definition": "The first 15-30 seconds designed to grab attention."
+        },
+        {
+          "term": "Script Outline",
+          "definition": "A structured skeleton with sections, key points, and timestamps."
+        },
+        {
+          "term": "Call to Action (CTA)",
+          "definition": "What you ask viewers to do — subscribe, comment, check out your course."
+        }
+      ],
+      "codeExample": {
+        "language": "text",
+        "code": "Prompt: YouTube video for Vocality Lab.\nTopic: Why most singers breathe wrong (and the simple fix)\nAudience: intermediate singers, 1-2 years training\nLength: 8-10 minutes\n\nStep 1: Generate 5 hook options for the first 30 seconds.\nConversational, slightly provocative, specific.\n\nAfter I pick a hook, I will ask for the outline, then the script.",
+        "annotation": "Multi-step workflow. Start with hooks, pick best, then outline, then script."
+      },
+      "exercise": {
+        "instruction": "Pick a YouTube topic. Run the full script pipeline:\n1. Generate 5 hooks and pick the best\n2. Full outline with timestamps\n3. Expand into conversational script\n\nPaste your hook, outline, and at least 2 sections.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 200,
+          "errorMessage": "Include hook, outline, and at least 2 expanded sections."
+        }
+      }
+    }
+  },
+  {
+    "id": "cp-10-03",
+    "title": "Thumbnail Concept and Title A/B Testing",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "The thumbnail and title are your video storefront. A great video with a bad thumbnail gets zero clicks. Claude can generate dozens of thumbnail concepts and title variations in seconds.\n\nStrong thumbnails have three elements: clear visual subject (usually your face), short text overlay (3-5 words max), and color contrast that pops. Claude can describe concepts in detail.\n\nFor titles, give Claude your topic and ask for 10 variations using different frameworks: curiosity gap, how-to, contrarian, and listicle. Pick top 2-3 and test with your audience before publishing.",
+      "terminology": [
+        {
+          "term": "Thumbnail Concept",
+          "definition": "Detailed description of what a YouTube thumbnail should look like."
+        },
+        {
+          "term": "Curiosity Gap",
+          "definition": "Title strategy that hints at valuable information without revealing it."
+        },
+        {
+          "term": "A/B Testing",
+          "definition": "Comparing two or more versions to see which performs better."
+        }
+      ],
+      "codeExample": {
+        "language": "text",
+        "code": "Prompt: My next video is about why most singers breathe wrong. Generate:\n\n1. TITLES (10 variations): 3 curiosity gap, 3 how-to, 2 contrarian, 2 listicle\n\n2. THUMBNAIL CONCEPTS (5): expression, text overlay (3-5 words), background, props, why it gets clicks\n\nStyle: clean, dark backgrounds, bold white/red text. Premium, not clickbaity.",
+        "annotation": "10 titles + 5 thumbnail concepts in one prompt. Pick the best pairing."
+      }
+    }
+  },
+  {
+    "id": "cp-10-04",
+    "title": "Social Media Content Batching",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "Posting daily is a grind if you create each post from scratch. Batching means creating all posts for the next 7 days in one session. Claude makes this practical.\n\nStart with one anchor piece (YouTube video, blog post, Skool lesson). Claude extracts 5-10 smaller pieces: Twitter thread, Instagram carousel, Skool discussion, quote graphic, behind-the-scenes post.\n\nThe key is platform-native formatting. Twitter thread = hook tweet + numbered points + CTA. Instagram carousel = title slide + content slides + CTA slide. Claude outputs content already structured for each platform.",
+      "terminology": [
+        {
+          "term": "Content Batching",
+          "definition": "Creating all social media posts for a set period in one focused session."
+        },
+        {
+          "term": "Anchor Content",
+          "definition": "Your main long-form piece that serves as source material for smaller posts."
+        },
+        {
+          "term": "Platform-Native",
+          "definition": "Content formatted specifically for where it will be posted."
+        }
+      ],
+      "codeExample": {
+        "language": "text",
+        "code": "Prompt: Here is my latest YouTube transcript about breath support. [paste transcript]\n\nGenerate a full week of content:\n1. TWITTER THREAD (8-10 tweets)\n2. INSTAGRAM CAROUSEL (7 slides)\n3. SKOOL POST: discussion prompt\n4. EMAIL TEASER: 3-sentence snippet\n5. SHORT-FORM SCRIPT: 60-second vertical video\n\nVoice: direct, knowledgeable, slightly irreverent.",
+        "annotation": "One video becomes five pieces across five platforms."
+      },
+      "exercise": {
+        "instruction": "Take long-form content. Generate at least 4 platform-specific pieces: Twitter thread, Instagram carousel, community post, and one more format. Paste all outputs.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 200,
+          "errorMessage": "Include at least 4 different platform-formatted pieces."
+        }
+      }
+    }
+  },
+  {
+    "id": "cp-10-05",
+    "title": "Newsletter and Email Sequence Generation",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "Email is the one platform you own. YouTube, Skool, Instagram — those can change algorithms or shut down. Your email list is yours forever. Claude can build both one-off newsletters and automated email sequences.\n\nA newsletter: hook (subject line + opening), one main idea, a story or example, and a CTA. Claude generates a full newsletter from a single topic in under 5 minutes.\n\nAutomated sequences are more powerful. A welcome sequence (5 emails over 2 weeks) introduces new subscribers to who you are, what you teach, and how to work with you. An evergreen sales sequence promotes your coaching on autopilot. Load it into your email tool once and it runs forever.",
+      "terminology": [
+        {
+          "term": "Email Sequence",
+          "definition": "Pre-written emails that send automatically on a schedule."
+        },
+        {
+          "term": "Welcome Sequence",
+          "definition": "First emails a new subscriber receives — 3-5 emails that introduce you and build trust."
+        },
+        {
+          "term": "Evergreen Sequence",
+          "definition": "Automated email series that runs continuously, year-round."
+        }
+      ],
+      "codeExample": {
+        "language": "text",
+        "code": "Prompt: Generate a 5-email welcome sequence for my Vocality email list.\n\nEmail 1 (Immediately): Welcome + free warm-up routine\nEmail 2 (Day 2): My story as a vocal coach\nEmail 3 (Day 4): #1 mistake in new students\nEmail 4 (Day 6): Student success story\nEmail 5 (Day 8): Invitation to book trial lesson\n\nFor each: subject line (+ A/B alternative), preview text, body copy, CTA button text.\nTone: knowledgeable friend, not salesy.",
+        "annotation": "Complete automated welcome sequence. Load into your email tool and it runs on autopilot."
+      }
+    }
+  },
+  {
+    "id": "cp-10-06",
+    "title": "Repurposing Long-Form to Short-Form",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "The highest-leverage content move is repurposing: one long piece becomes many short pieces. A 10-minute YouTube video has enough material for a week of social media content. Claude makes this conversion nearly instant.\n\nThe repurposing chain: YouTube video breaks into Twitter thread (key points), Instagram carousel (one concept visualized), Skool discussion post, newsletter section, and 2-3 short-form video scripts (Reels, Shorts, TikTok). Each format pulls a different angle from the same source.\n\nGive Claude the full transcript and ask it to extract and reformat. Claude adapts content to each platform style. Twitter needs punchy standalone tweets. Instagram needs visual slide descriptions. Newsletter needs a narrative arc. Same ideas, different packaging.",
+      "terminology": [
+        {
+          "term": "Content Repurposing",
+          "definition": "Taking one piece and reformatting for multiple platforms."
+        },
+        {
+          "term": "Repurposing Chain",
+          "definition": "The sequence of formats you convert anchor content into — longest to shortest."
+        },
+        {
+          "term": "Short-Form Script",
+          "definition": "A 30-90 second script for vertical video platforms like Reels, Shorts, TikTok."
+        }
+      ],
+      "codeExample": {
+        "language": "text",
+        "code": "Prompt: Here is my 10-minute YouTube transcript about breath support. [paste]\n\nRepurpose into:\n1. TWITTER THREAD (8 tweets)\n2. INSTAGRAM CAROUSEL (8 slides with text)\n3. SKOOL POST: discussion question\n4. NEWSLETTER: 200-word summary\n5. SHORT-FORM SCRIPTS (3): 45-60 seconds each\n6. LINKEDIN POST: 150 words, professional angle\n\nEach piece standalone. Clear headers.",
+        "annotation": "One transcript, six platforms, six pieces of content."
+      },
+      "exercise": {
+        "instruction": "Take a transcript or detailed lesson. Repurpose into at least 5 formats: Twitter thread, Instagram carousel, Skool post, newsletter snippet, short-form video script. Paste all outputs.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 250,
+          "errorMessage": "Include at least 5 different formatted pieces."
+        }
+      }
+    }
+  },
+  {
+    "id": "cp-10-07",
+    "title": "Content Calendar Automation",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "A content calendar maps what you will publish, where, and when — for the entire month ahead. Without one, you wake up wondering what to post. With one, you just execute. Claude generates a full month in one prompt.\n\nInputs: your content pillars (3-5 topics), platforms (YouTube, Skool, Instagram, email), cadence (how often per platform), and special dates or launches. Claude maps these into a day-by-day calendar with topics, formats, and platform assignments.\n\nThe calendar should be realistic. If you record one YouTube video per week, the calendar reflects that. Claude can identify content gaps — weeks where a pillar is overrepresented or a platform neglected. Output is a spreadsheet-ready table for Google Sheets or Notion.",
+      "terminology": [
+        {
+          "term": "Content Calendar",
+          "definition": "Month-long plan mapping content topics to platforms and publish dates."
+        },
+        {
+          "term": "Content Gap",
+          "definition": "A period where a content pillar or platform is missing from your schedule."
+        },
+        {
+          "term": "Publishing Cadence",
+          "definition": "The rhythm of how often you publish on each platform."
+        }
+      ],
+      "codeExample": {
+        "language": "text",
+        "code": "Prompt: Generate a 4-week content calendar for my vocal coaching brand.\n\nPILLARS: 1. Technique education 2. Student transformations 3. Myth-busting 4. Behind-the-scenes 5. Song analysis\n\nPLATFORMS: YouTube 1/week (Wed), Skool 1/day, Instagram 3/week (Mon/Wed/Fri), Email 1/week (Fri)\n\nSPECIAL: Week 2 = new Skool pricing, Week 4 = student showcase\n\nTable: Date, Platform, Pillar, Topic, Format, Notes. Paste-ready for Google Sheets.",
+        "annotation": "~50 content items across 4 weeks. Run on the last day of every month."
+      }
+    }
+  },
+  {
+    "id": "cp-10-08",
+    "title": "Capstone: Build Your Full Content Pipeline",
+    "type": "build",
+    "xp": 25,
+    "bonusXp": 5,
+    "content": {
+      "explanation": "This capstone brings everything together: your complete content production pipeline. Not theoretical — an actual working system you will use starting this week.\n\nFive stages. Stage 1: Strategy (pillars, platforms, cadence, calendar). Stage 2: Creation (script workflow, prompt templates). Stage 3: Repurposing (long-form to short-form chain). Stage 4: Scheduling (batching workflow, calendar template). Stage 5: Measurement (metrics and review cadence).\n\nBuild all five stages. Test the pipeline by running one piece of content through it — from idea to published across multiple platforms. Document what worked, what was slow, and what to optimize. The deliverable is your personal content operations manual.",
+      "exercise": {
+        "instruction": "Build your complete content production pipeline:\n\n1. STRATEGY: Define pillars, platforms, cadence. Generate 2-week calendar.\n2. CREATION: Prompt templates for your top 2 content types.\n3. REPURPOSING: Chain from one anchor piece to 5+ platform formats.\n4. SCHEDULING: Weekly batching workflow (when you create, schedule, which tools).\n5. TEST RUN: One topic through the full pipeline, output at each stage.\n\nSubmit all templates, calendar, and test run results.",
+        "inputType": "textarea",
+        "steps": [
+          "Define content pillars, platforms, and cadence",
+          "Generate 2-week calendar using Claude",
+          "Create prompt templates for top 2 content types",
+          "Build repurposing chain from anchor piece to 5+ formats",
+          "Document weekly batching workflow",
+          "Run one topic through full pipeline, show outputs",
+          "Note what worked and what to optimize"
+        ],
+        "validation": {
+          "type": "length",
+          "min": 400,
+          "errorMessage": "Include strategy, templates, repurposing chain, calendar, and test run."
+        }
+      }
+    }
+  }
+]

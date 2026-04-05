@@ -1,0 +1,296 @@
+[
+  {
+    "id": "ba-09-01",
+    "title": "Mapping Your Business Processes for Automation",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "Before you automate anything, you need a clear map of what you actually do. Most solo business owners run on autopilot — they do the same steps every week without ever writing them down. The problem is that you cannot hand off what you have not defined. Automation starts with a list, not a tool.\n\nHere is the exercise: write down every repeating task in your business. Student onboarding, lesson scheduling, sending invoices, following up with leads, posting in your community, answering the same questions over email. Next to each one, write how often you do it and how long it takes. That is your automation menu.\n\nNow rank them. The best candidates for automation have three traits: they happen frequently, they follow the same steps every time, and they do not require creative judgment. Sending a welcome email to a new student? Perfect candidate. Deciding whether a student is ready for advanced repertoire? That stays with you.\n\nClaude can help you build this map. Describe your weekly routine in plain language, and Claude will organize it into a process inventory — complete with frequency, time cost, and automation potential. That inventory becomes your playbook for the rest of this module.",
+      "terminology": [
+        {
+          "term": "Process Mapping",
+          "definition": "Writing down every step of a repeating task so you can see it clearly and decide what to automate."
+        },
+        {
+          "term": "Automation Candidate",
+          "definition": "A task that happens often, follows the same steps each time, and does not need creative decision-making."
+        },
+        {
+          "term": "Process Inventory",
+          "definition": "A complete list of all repeating tasks in your business, ranked by how much time they cost and how easy they are to automate."
+        }
+      ]
+    }
+  },
+  {
+    "id": "ba-09-02",
+    "title": "Student Onboarding Automation",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "When a new student signs up, a chain of things needs to happen: welcome email, intake form, first lesson scheduling, payment setup, and access to resources. If you do this manually for every new student, you are spending 20-30 minutes on logistics instead of teaching. Claude can generate every piece of that chain for you.\n\nThe key is building templates that you fill in once and reuse forever. A welcome email template with placeholders for the student name, lesson time, and payment link. An intake form that asks about vocal goals, experience level, and any physical limitations. A first-lesson checklist so you never forget to cover the basics.\n\nHere is how it works in practice: you tell Claude about your onboarding process — what you need from the student, what you send them, and in what order. Claude generates the full sequence: email copy, form questions, scheduling instructions, and a checklist. You review it, tweak the tone, and save it. Next time a student signs up, you grab the template and fill in the blanks in under 2 minutes.",
+      "terminology": [
+        {
+          "term": "Onboarding Sequence",
+          "definition": "The series of steps a new client goes through from sign-up to first session — emails, forms, scheduling, and access grants."
+        },
+        {
+          "term": "Template Placeholders",
+          "definition": "Blank spots in a template marked with brackets like [STUDENT_NAME] that you fill in for each new person."
+        }
+      ],
+      "codeExample": {
+        "language": "text",
+        "code": "Prompt to Claude:\n\nI run an online vocal coaching business. When a new student signs up, I need to:\n1. Send a welcome email with lesson expectations\n2. Share an intake form asking about their vocal goals and experience\n3. Send a Calendly link for their first lesson\n4. Confirm their Stripe payment is set up\n5. Add them to my Skool community\n\nGenerate the full welcome email, intake form questions (10 max), and a step-by-step onboarding checklist I can reuse. Tone: warm but professional. Keep it concise.",
+        "annotation": "This single prompt generates three reusable assets: the email, the form, and the checklist. You save them as templates and reuse them for every new student."
+      }
+    }
+  },
+  {
+    "id": "ba-09-03",
+    "title": "Lesson Scheduling and Reminders",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "No-shows and last-minute reschedules cost you time and money. The fix is a reminder system that runs without you thinking about it. Most scheduling tools like Calendly or Lunacal have built-in reminders, but Claude can help you build the messaging layer on top — the actual words that go out to students.\n\nA good reminder sequence has three touchpoints: a confirmation right after booking, a reminder 24 hours before, and a final nudge 1 hour before. Each one serves a different purpose. The confirmation sets expectations (what to prepare, link to the call). The 24-hour reminder reduces no-shows. The 1-hour nudge catches the people who forgot.\n\nClaude can also generate reschedule templates — polite but firm messages that protect your time. Things like cancellation policies, reschedule windows, and waitlist notifications. The goal is to have every scheduling scenario covered by a template so you never write these from scratch again.",
+      "terminology": [
+        {
+          "term": "Reminder Sequence",
+          "definition": "A series of automated messages sent before a scheduled event — typically at booking, 24 hours before, and 1 hour before."
+        },
+        {
+          "term": "Cancellation Policy Template",
+          "definition": "A pre-written message that explains your rules about cancellations and reschedules, ready to send when needed."
+        }
+      ],
+      "codeExample": {
+        "language": "text",
+        "code": "Prompt to Claude:\n\nGenerate a 3-message reminder sequence for my vocal coaching lessons:\n1. Booking confirmation (sent immediately after scheduling)\n2. 24-hour reminder\n3. 1-hour reminder\n\nLessons are on Google Meet. Students should:\n- Warm up lightly before the lesson\n- Have water nearby\n- Be in a quiet room\n- Have the Meet link ready\n\nAlso generate a reschedule request template and a no-show follow-up message. Tone: friendly, professional, not pushy.",
+        "annotation": "This creates five templates in one prompt. Save them in a document and copy-paste whenever you need them, or plug them into your scheduling tool custom message fields."
+      },
+      "exercise": {
+        "instruction": "Open Claude Code and generate a complete reminder sequence for your business. Include: booking confirmation, 24-hour reminder, 1-hour reminder, reschedule template, and no-show follow-up. Customize the details for your actual business. Paste the full output below.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 100,
+          "errorMessage": "Your reminder sequence should include all five messages."
+        }
+      }
+    }
+  },
+  {
+    "id": "ba-09-04",
+    "title": "Invoice and Payment Tracking",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "If you are using Stripe for payments, you already have a record of every transaction. But turning that raw data into something useful — knowing who paid, who is overdue, and what your monthly revenue looks like — usually means staring at spreadsheets. Claude can do the staring for you.\n\nThe approach is simple: export your Stripe data (or copy it from your dashboard), paste it into Claude, and ask for analysis. Claude can generate formatted invoices from lesson logs, flag overdue payments, calculate monthly totals, and even draft polite payment reminder emails for students who are behind.\n\nFor invoicing, Claude can take a simple input like Student X, 4 lessons in March, EUR 50/lesson and generate a professional invoice with your business details, line items, totals, and payment terms.",
+      "terminology": [
+        {
+          "term": "Lesson Log",
+          "definition": "A record of all lessons given — who, when, duration, and rate."
+        },
+        {
+          "term": "Payment Reminder",
+          "definition": "A polite follow-up message sent to a client whose payment is overdue."
+        },
+        {
+          "term": "Invoice Template",
+          "definition": "A pre-formatted document with your business details and blank spots for lesson details, amounts, and dates."
+        }
+      ],
+      "codeExample": {
+        "language": "text",
+        "code": "Prompt: Here is my March lesson log:\nAna P. — 4 lessons (Mar 3,10,17,24) — EUR 50/lesson\nMihai D. — 3 lessons (Mar 5,12,19) — EUR 50/lesson\nElena R. — 4 lessons (Mar 2,9,16,23) — EUR 60/lesson (advanced)\n\nBusiness: Vocality — Ionut Rosu PFA, CUI: RO12345678\nGenerate individual invoices with invoice numbers, dates, line items, totals, payment terms.",
+        "annotation": "One prompt, three invoices. Claude formats them consistently."
+      }
+    }
+  },
+  {
+    "id": "ba-09-05",
+    "title": "Lead Generation and Follow-Up Sequences",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "Most potential students do not sign up on the first contact. They find your YouTube channel, check your website, maybe book a trial lesson, and then go quiet. The difference between a business that grows and one that stalls is follow-up. A structured email sequence keeps you in their mind without you manually chasing every lead.\n\nA follow-up sequence typically has 3-5 emails spread over 1-2 weeks. The first email thanks them for their interest and offers value. The second shares a testimonial. The third addresses common objections. The final email creates gentle urgency.\n\nClaude builds these sequences fast. You describe your ideal student, your offer, and the common objections you hear. Claude writes the full sequence with subject lines, body copy, and send timing.",
+      "terminology": [
+        {
+          "term": "Follow-Up Sequence",
+          "definition": "A series of pre-written emails sent automatically to someone who showed interest but has not signed up yet."
+        },
+        {
+          "term": "Lead",
+          "definition": "A person who has shown interest in your service but has not become a paying client yet."
+        },
+        {
+          "term": "Objection Handling",
+          "definition": "Addressing the common reasons people hesitate to buy — cost, time, fear, uncertainty — before they have to ask."
+        }
+      ],
+      "codeExample": {
+        "language": "text",
+        "code": "Prompt: I run Vocality, an online vocal coaching business. Someone just completed a trial lesson but has not signed up.\n\nWrite a 4-email follow-up sequence:\n- Email 1 (Day 1): Thank them, share one vocal tip\n- Email 2 (Day 3): Student transformation story\n- Email 3 (Day 5): Address affordability objection\n- Email 4 (Day 7): Final nudge with limited-time offer\n\nInclude subject lines. Tone: knowledgeable, warm, zero pressure.",
+        "annotation": "Each email has a specific job: value, proof, objection handling, urgency."
+      },
+      "exercise": {
+        "instruction": "Generate a complete lead follow-up email sequence for your business. Define your ideal client, your offer, and at least two common objections. Generate 3-5 emails with subject lines and send timing.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 150,
+          "errorMessage": "Include all emails with subject lines and body copy."
+        }
+      }
+    }
+  },
+  {
+    "id": "ba-09-06",
+    "title": "Skool Community Content Scheduling",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "Running a paid community on Skool means you need to post consistently. Members paying 47-197 per month expect regular, valuable content — not silence. But creating community posts from scratch every day eats into your teaching time. Claude can batch-generate a week or even a month of community content in one sitting.\n\nThe trick is content categories. Define 4-5 types of posts that your community expects: technique tips, practice challenges, Q&A prompts, behind-the-scenes stories, and member spotlights. Then give Claude your categories and ask for a week of posts, one per day, rotating through the categories.\n\nYou can also generate discussion prompts that get members talking. Claude can generate 20-30 of these prompts in one shot, and you schedule them across the month.",
+      "terminology": [
+        {
+          "term": "Content Batching",
+          "definition": "Creating many pieces of content in one session instead of one at a time."
+        },
+        {
+          "term": "Content Categories",
+          "definition": "The recurring types of posts you rotate through — tips, challenges, Q&A, stories."
+        },
+        {
+          "term": "Discussion Prompt",
+          "definition": "A question or challenge posted to encourage community members to respond and interact."
+        }
+      ],
+      "codeExample": {
+        "language": "text",
+        "code": "Prompt: I run a paid Skool community for singers (47/month). Generate 7 days of posts:\n- Monday: Technique Tip\n- Tuesday: Practice Challenge\n- Wednesday: Q&A Prompt\n- Thursday: Behind the Scenes\n- Friday: Student Spotlight\n- Saturday: Weekend Listening\n- Sunday: Reflection\n\n3-5 sentences each, hook first line. Topic: breath support and appoggio.",
+        "annotation": "One prompt = full week of community content. Change topic focus each week."
+      }
+    }
+  },
+  {
+    "id": "ba-09-07",
+    "title": "Client Communication Templates",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "You send the same types of messages over and over: answering pricing questions, explaining your cancellation policy, handling complaints, congratulating students on breakthroughs. Each one takes 5-10 minutes. Multiply that by 27 students and your inbox becomes a part-time job.\n\nThe solution is a template library — a collection of pre-written messages for every common scenario. Not robotic copy-paste, but well-crafted messages with placeholders you fill in. Claude can generate this entire library in one session.\n\nOrganize by category: inquiries (pricing, availability), logistics (scheduling, payments, technical issues), feedback (progress reports, milestones, areas to work on), and boundaries (late cancellations, payment reminders, scope of service).",
+      "terminology": [
+        {
+          "term": "Template Library",
+          "definition": "A collection of pre-written messages organized by category, ready to customize and send."
+        },
+        {
+          "term": "Placeholders",
+          "definition": "Spots in a template marked like [NAME] or [DATE] that you fill in with specific details."
+        }
+      ],
+      "codeExample": {
+        "language": "text",
+        "code": "Prompt: Generate a client communication template library for my vocal coaching business:\n\nINQUIRIES: Pricing response, Do you teach beginners?, Expected results\nLOGISTICS: Reschedule confirmation, Payment reminder, Technical issues\nFEEDBACK: Progress report, Milestone celebration, Course correction\n\nUse [STUDENT_NAME], [DATE], [AMOUNT] as placeholders. Tone: warm, professional, honest.",
+        "annotation": "9 templates in one prompt. Save them and fill in placeholders when needed."
+      },
+      "exercise": {
+        "instruction": "Generate a template library of at least 8 client communication templates. Organize by category. Include placeholders. Paste the complete library below.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 200,
+          "errorMessage": "Include at least 8 templates organized by category."
+        }
+      }
+    }
+  },
+  {
+    "id": "ba-09-08",
+    "title": "SOP Generation from Descriptions",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "A Standard Operating Procedure (SOP) is a step-by-step document that explains how to do a specific task in your business. If you got sick tomorrow and someone had to run your business for a week, SOPs are what they would follow. Most solo business owners have zero SOPs because writing them feels tedious. Claude eliminates that friction.\n\nThe workflow: you describe a process out loud (or type it as a rough brain dump), and Claude converts it into a clean, numbered SOP document. You do not need to organize your thoughts first. Just describe what you do, in whatever order it comes to mind, and Claude structures it into a proper procedure.\n\nGood SOPs include: a title, the purpose of the process, who does it, how often, the step-by-step procedure, tools needed, and common mistakes to avoid. Claude adds all of this automatically.",
+      "terminology": [
+        {
+          "term": "SOP",
+          "definition": "Standard Operating Procedure — a step-by-step document that explains exactly how to complete a specific task."
+        },
+        {
+          "term": "Brain Dump",
+          "definition": "Writing everything you know about a process in rough, unorganized form — Claude turns this into structured documentation."
+        }
+      ],
+      "codeExample": {
+        "language": "text",
+        "code": "Prompt: Turn this brain dump into a professional SOP:\n\nWhen a new student signs up, I check Stripe for payment. Then welcome email from Gmail template. Send Calendly link. Add to Skool manually (sometimes forget). Check intake form, send reminder if missing. First lesson: assessment of range, tone, breathing, posture.\n\nFormat as SOP with: title, purpose, frequency, tools, numbered steps, common mistakes section.",
+        "annotation": "Messy input becomes clean SOP. The common mistakes section catches things like forgetting to add students to Skool."
+      },
+      "exercise": {
+        "instruction": "Pick one process you do regularly but have never documented. Brain-dump it to Claude. Ask Claude to convert to a formal SOP. Paste both your brain dump and the resulting SOP.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 150,
+          "errorMessage": "Include both your brain dump and the generated SOP."
+        }
+      }
+    }
+  },
+  {
+    "id": "ba-09-09",
+    "title": "Financial Reporting and Bookkeeping Helpers",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "Running a PFA in Romania means you need to track income, expenses, and deductions for ANAF. Most solo business owners either pay an accountant to do everything or scramble at tax time. Claude can sit in the middle — not replacing your accountant, but keeping your records organized so tax prep takes hours instead of days.\n\nThe simplest approach: at the end of each month, paste your Stripe earnings and business expenses into Claude and ask for a monthly summary. Claude can categorize expenses, calculate totals, and flag anything unusual. Over time, these monthly summaries become your financial history.\n\nClaude can also help with PFA-specific tasks: estimating quarterly tax obligations, listing deductible expenses, and generating revenue summaries your accountant needs.",
+      "terminology": [
+        {
+          "term": "PFA",
+          "definition": "Persoana Fizica Autorizata — Romanian freelancer/sole proprietor business structure."
+        },
+        {
+          "term": "ANAF",
+          "definition": "Agentia Nationala de Administrare Fiscala — Romania tax authority."
+        },
+        {
+          "term": "Expense Categorization",
+          "definition": "Sorting business expenses into standard categories for tax reporting."
+        }
+      ],
+      "codeExample": {
+        "language": "text",
+        "code": "Prompt: Here is my March 2026 financial data:\n\nINCOME: 24 students x EUR 50 x 4 lessons = EUR 4,800; 3 advanced x EUR 60 x 4 = EUR 720; Skool: 8 x EUR 147 = EUR 1,176. Total: EUR 6,696\n\nEXPENSES: Zoom EUR 14, Skool EUR 91, Canva EUR 12, Lunacal EUR 15, Mic EUR 230, Internet EUR 25\n\nGenerate monthly summary with: income breakdown, expense categories, net profit, estimated tax (10% + social), accountant notes.",
+        "annotation": "Accountant-ready monthly report. Run every month for 12 clean summaries at tax time."
+      }
+    }
+  },
+  {
+    "id": "ba-09-10",
+    "title": "Capstone: Automate One End-to-End Business Process",
+    "type": "build",
+    "xp": 25,
+    "bonusXp": 5,
+    "content": {
+      "explanation": "This is where theory becomes action. Pick one real business process — something you do every week that eats your time — and automate it end-to-end. Not hypothetical. An actual process in your actual business.\n\nReview your process inventory from Lesson 1. Pick the process that costs the most time relative to how repetitive it is. Good candidates: student onboarding, weekly community content, monthly invoicing, lead follow-up, or lesson preparation.\n\nBuild the full automation package: templates, SOPs, email sequences, checklists. Use Claude to generate every piece. Test it by running through the process once. Note what works and what needs adjusting.\n\nThe deliverable: complete automation package with before/after time comparison. 30 minutes saved per week is 26 hours saved per year.",
+      "exercise": {
+        "instruction": "Complete this capstone:\n1. Choose one repeating business process to automate\n2. Document the current process (steps and time)\n3. Use Claude to generate all templates, SOPs, and sequences\n4. Test the automated version once\n5. Write before/after time comparison\n\nSubmit: process chosen and why, all templates, time comparison, one improvement for next iteration.",
+        "inputType": "textarea",
+        "steps": [
+          "Pick one repeating process",
+          "Document current manual version",
+          "Generate all templates and SOPs using Claude",
+          "Run through process once with new templates",
+          "Write before/after time comparison",
+          "Identify one improvement"
+        ],
+        "validation": {
+          "type": "length",
+          "min": 300,
+          "errorMessage": "Include your chosen process, all generated templates, and before/after comparison."
+        }
+      }
+    }
+  }
+]

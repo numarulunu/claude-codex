@@ -1,0 +1,181 @@
+[
+  {
+    "id": "hk-03-01",
+    "title": "What Are Hooks — Event-Driven Automation",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "Hooks are automatic actions that Claude Code runs when specific events happen during your session. They live in your .claude/settings.json file and fire without you doing anything — no slash command, no manual trigger. You set them up once, and they work every time the matching event occurs.\n\nThink of hooks like tripwires. You stretch a wire across a doorway, and when someone walks through, a bell rings. In Claude Code, the doorway is an event (like Claude about to run a Bash command), and the bell is whatever action you configured — run a shell command, ask Claude a question, or block the operation entirely. This turns Claude Code from a tool you talk to into a system that enforces your rules automatically.\n\nHooks solve a real problem: consistency. Without hooks, you have to remember to lint your code, run security checks, and follow your project conventions every single time. With hooks, those checks happen automatically. You can gate dangerous operations, auto-format files on save, inject context at session start, or log every command Claude runs. The automation layer means your rules are always enforced, even when you forget to ask.",
+      "terminology": [
+        {
+          "term": "Hook",
+          "definition": "An automated action configured in settings.json that fires when a specific event occurs during a Claude Code session."
+        },
+        {
+          "term": "Event-Driven",
+          "definition": "A programming pattern where actions are triggered by events (something happening) rather than by direct commands from the user."
+        },
+        {
+          "term": "settings.json",
+          "definition": "The configuration file at .claude/settings.json where hooks, permissions, and other Claude Code preferences are stored."
+        }
+      ]
+    }
+  },
+  {
+    "id": "hk-03-02",
+    "title": "Hook Event Types — PreToolUse, PostToolUse, SessionStart, Stop",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "Claude Code supports five hook event types, each firing at a different moment in the workflow. Understanding when each one fires is the key to writing hooks that actually do what you want.\n\nPreToolUse fires right before Claude executes a tool — before a file is read, a command is run, or an edit is made. This is your gatekeeping moment. You can inspect what Claude is about to do and either allow it, block it, or modify it. Use PreToolUse for security checks, approval gates, and input validation. PostToolUse fires right after a tool finishes. The action already happened, so you cannot block it — but you can react to it. Use PostToolUse for auto-formatting saved files, logging actions, running tests after code changes, or triggering follow-up commands.\n\nSessionStart fires once when a Claude Code session begins, before you even type your first prompt. This is where you inject context, load environment variables, check prerequisites, or print status information. Stop fires when Claude finishes generating a response — useful for post-response validation or cleanup. Finally, PermissionRequest fires when Claude asks for permission to do something, letting you auto-approve or auto-deny certain actions based on patterns.",
+      "terminology": [
+        {
+          "term": "PreToolUse",
+          "definition": "Hook event that fires before Claude executes any tool. Can block the action based on exit code or prompt response."
+        },
+        {
+          "term": "PostToolUse",
+          "definition": "Hook event that fires after a tool finishes executing. Used for reactions like formatting, logging, or follow-up commands."
+        },
+        {
+          "term": "SessionStart",
+          "definition": "Hook event that fires once at the beginning of a new Claude Code session, before any user input."
+        },
+        {
+          "term": "Stop",
+          "definition": "Hook event that fires when Claude finishes generating a response turn."
+        },
+        {
+          "term": "PermissionRequest",
+          "definition": "Hook event that fires when Claude requests permission to use a tool, allowing automatic approval or denial."
+        }
+      ]
+    }
+  },
+  {
+    "id": "hk-03-03",
+    "title": "Tool Matchers — Targeting Bash, Write, Edit",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "Not every hook should fire on every tool call. Tool matchers let you target specific tools or even specific arguments. Without a matcher, your hook fires on every single tool use — which is rarely what you want. Matchers narrow the scope so your hook only fires when it matters.\n\nThe simplest matcher is just the tool name: Bash, Write, Edit, Read. This targets all uses of that tool. But you can go deeper with glob patterns on the arguments. Bash(git *) matches any Bash call that starts with git. Bash(rm *) catches file deletions. Write(*.py) matches writes to Python files. Edit(src/*) targets edits to files in the src directory. These patterns use standard glob syntax — the asterisk matches anything, and the question mark matches a single character.\n\nYou can also use an empty matcher array or omit the matcher entirely to match all tools for that event type. And you can specify multiple matchers in an array to match several patterns. The matcher is defined in the tool_name field of your hook configuration, right alongside the event type.",
+      "codeExample": {
+        "language": "json",
+        "code": "{\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"tool_name\": \"Bash(git push*)\",\n        \"command\": \"echo 'About to push -- make sure tests pass!'\",\n        \"description\": \"Warn before any git push command\"\n      },\n      {\n        \"tool_name\": \"Write(*.py)\",\n        \"command\": \"echo 'Writing a Python file'\",\n        \"description\": \"Log when writing Python files\"\n      },\n      {\n        \"tool_name\": \"Edit\",\n        \"command\": \"echo 'Editing a file'\",\n        \"description\": \"Log all file edits regardless of path\"\n      }\n    ]\n  }\n}",
+        "annotation": "Three matchers shown: Bash(git push*) matches only git push commands, Write(*.py) matches writes to Python files, and bare Edit matches all edits. These go in your .claude/settings.json file."
+      }
+    }
+  },
+  {
+    "id": "hk-03-04",
+    "title": "Your First Hook — Command-Based",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "Command-based hooks run a shell command when triggered. The hook behavior depends on the exit code of that command. Exit code 0 means success — the operation proceeds. A non-zero exit code means the hook failed, which blocks the tool call for PreToolUse hooks. This exit-code pattern is the foundation of all command-based automation.\n\nThe hook receives context through environment variables. For PreToolUse and PostToolUse hooks, the TOOL_NAME variable contains the tool being called, and TOOL_INPUT contains the JSON-encoded input to the tool. For Bash tools, this includes the command being run. For Write and Edit tools, this includes the file path and content. Your shell command can inspect these variables to make decisions.\n\nLet us build a simple hook that blocks any attempt to delete files using rm. This is a PreToolUse hook on Bash that checks whether the command contains rm, and exits with code 2 (which tells Claude the action was blocked and to inform the user) if it does. Exit code 0 lets the command through, exit code 1 is a soft warning, and exit code 2 is a hard block.",
+      "codeExample": {
+        "language": "json",
+        "code": "{\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"tool_name\": \"Bash(rm *)\",\n        \"command\": \"echo 'BLOCKED: File deletion is not allowed by project hooks.' && exit 2\",\n        \"description\": \"Block all rm commands to prevent accidental file deletion\"\n      }\n    ]\n  }\n}",
+        "annotation": "This hook fires before any Bash command matching rm followed by arguments. The exit code 2 tells Claude to block the action and show the message to the user. Exit 0 allows, exit 1 warns, exit 2 blocks."
+      },
+      "exercise": {
+        "instruction": "Open your .claude/settings.json file (create it if it does not exist) and add a PreToolUse hook that warns before any git commit command. Use the tool matcher Bash(git commit*) and have it echo a reminder message. Set the exit code to 0 so it warns but does not block. Test it by asking Claude to make a commit in a test project.",
+        "inputType": "code",
+        "validation": {
+          "type": "contains",
+          "value": "PreToolUse",
+          "errorMessage": "Your hook configuration should include a PreToolUse event type. Make sure you are adding the hook under the hooks key with a PreToolUse array."
+        }
+      }
+    }
+  },
+  {
+    "id": "hk-03-05",
+    "title": "Prompt-Based Hooks — Asking Claude Before Acting",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "Not all hooks run shell commands. Prompt-based hooks send a text prompt to Claude itself, asking it to evaluate the situation before proceeding. Instead of a command field, you use a prompt field. Claude reads the prompt, considers the context of what it is about to do, and decides whether to proceed.\n\nThis is powerful for nuanced decisions that a simple shell script cannot handle. A shell command can check if a file exists or if a string matches a pattern, but it cannot reason about whether a code change makes architectural sense. A prompt-based hook can say: Review this edit. Does it follow our project convention of keeping components under 100 lines? If not, suggest how to split it. Claude then evaluates the actual code change against that rule.\n\nPrompt-based hooks are especially useful for code review gates. You can set up a PostToolUse hook on Edit that prompts Claude to verify the change follows your coding standards. Or a PreToolUse hook on Bash that asks Claude whether the command is safe to run. The prompt has access to the same tool input context, so Claude knows exactly what is about to happen.",
+      "codeExample": {
+        "language": "json",
+        "code": "{\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"tool_name\": \"Bash\",\n        \"prompt\": \"Review the command that is about to be executed. If it could delete data, modify system files, or access the network in an unexpected way, warn the user and explain the risk. If it looks safe, say nothing.\",\n        \"description\": \"Ask Claude to review Bash commands for safety before running\"\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"tool_name\": \"Edit\",\n        \"prompt\": \"Review the edit that was just made. Check if the code follows the project style conventions. If there are issues, list them briefly.\",\n        \"description\": \"Auto-review code edits for style compliance\"\n      }\n    ]\n  }\n}",
+        "annotation": "Two prompt-based hooks: one reviews Bash commands for safety before they run (PreToolUse), and one reviews code edits for style after they happen (PostToolUse). The prompt field replaces the command field — Claude evaluates the situation using reasoning, not a script."
+      }
+    }
+  },
+  {
+    "id": "hk-03-06",
+    "title": "Practical: Auto-Linting and Security Gates",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "Two of the most valuable hook setups are auto-linting (format code automatically after every edit) and security gates (block dangerous commands before they run). These two patterns cover a huge percentage of real-world hook usage.\n\nFor auto-linting, you want a PostToolUse hook on Write and Edit that runs your formatter on the affected file. The hook command receives the file path through the tool input context. For a JavaScript or TypeScript project, this means running Prettier or ESLint with the fix flag on the file that was just written or edited. The formatter runs silently, and the file is clean before you even look at it.\n\nFor security gates, you want PreToolUse hooks on Bash that check for dangerous patterns. This goes beyond just blocking rm — you can block curl piped to bash (piping remote scripts to shell), chmod 777 (overly permissive file permissions), writing to disk devices, or any command that touches sensitive directories. Each pattern gets its own matcher or you combine checks in a single script that inspects the tool input.",
+      "codeExample": {
+        "language": "json",
+        "code": "{\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"tool_name\": \"Write(*.{js,ts,jsx,tsx})\",\n        \"command\": \"npx prettier --write \\\"\\\" 2>/dev/null || true\",\n        \"description\": \"Auto-format JS/TS files with Prettier after writing\"\n      }\n    ],\n    \"PreToolUse\": [\n      {\n        \"tool_name\": \"Bash(curl *)\",\n        \"command\": \"echo \\\"\\\" | grep -q '| *bash' && echo 'BLOCKED: Piping remote content to shell is not allowed.' && exit 2 || exit 0\",\n        \"description\": \"Block piping curl output to shell\"\n      },\n      {\n        \"tool_name\": \"Bash(chmod 777*)\",\n        \"command\": \"echo 'BLOCKED: chmod 777 is too permissive. Use specific permissions.' && exit 2\",\n        \"description\": \"Block overly permissive file permissions\"\n      }\n    ]\n  }\n}",
+        "annotation": "The PostToolUse hook runs Prettier on any JS/TS file after it is written. The PreToolUse hooks block two dangerous patterns: piping curl to bash, and setting 777 permissions. The or-true on Prettier prevents the hook from failing if the formatter is not installed."
+      },
+      "exercise": {
+        "instruction": "Create a hook configuration that does two things: (1) Auto-formats Python files with black after they are written (PostToolUse on Write(*.py)), and (2) Blocks any Bash command that contains sudo (PreToolUse with exit code 2). Write the full JSON configuration and test it by asking Claude to write a Python file and then try running a sudo command.",
+        "inputType": "code",
+        "validation": {
+          "type": "contains_all",
+          "values": [
+            "PostToolUse",
+            "PreToolUse",
+            "black",
+            "sudo"
+          ],
+          "errorMessage": "Your configuration should include both a PostToolUse hook for black formatting and a PreToolUse hook that blocks sudo commands."
+        }
+      }
+    }
+  },
+  {
+    "id": "hk-03-07",
+    "title": "Combining Hooks with Skills",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "Hooks and skills are separate features, but they become much more powerful when combined. Skills are slash commands that give Claude specialized instructions for a task (like /commit or /review-pr). Hooks are automatic triggers. When you use hooks to feed information into a skill workflow, or use SessionStart hooks to prepare the environment for skills, you create a system that is both automated and intelligent.\n\nA common pattern is using a SessionStart hook to check project status and inject context that skills can use. For example, a SessionStart hook might run git status and check for uncommitted changes, then print a reminder. When you later run a commit skill, Claude already has that context loaded. Another pattern is using PostToolUse hooks to trigger skill-like behavior — after Claude edits a test file, a hook could prompt Claude to run the test suite, mimicking what a test-driven development skill would do.\n\nYou can also use hooks to enforce skill usage. A PreToolUse hook with a prompt can check whether Claude is about to make a major change without a plan, and remind it (and you) to use a planning skill first. This creates guardrails that nudge the workflow toward your preferred process without being rigid.",
+      "codeExample": {
+        "language": "json",
+        "code": "{\n  \"hooks\": {\n    \"SessionStart\": [\n      {\n        \"command\": \"echo '--- Session Context ---' && git status --short 2>/dev/null && echo '---' && head -5 .claude/CLAUDE.md 2>/dev/null && echo '---'\",\n        \"description\": \"Print git status and project context at session start\"\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"tool_name\": \"Edit(*.test.*)\",\n        \"prompt\": \"A test file was just edited. Remind the user to run the test suite to verify the changes. Suggest the appropriate test command for this project.\",\n        \"description\": \"Prompt to run tests after editing test files\"\n      }\n    ],\n    \"PreToolUse\": [\n      {\n        \"tool_name\": \"Write(src/*)\",\n        \"prompt\": \"A new source file is about to be created. Check: does a similar file already exist in the project? If so, suggest editing the existing file instead of creating a new one.\",\n        \"description\": \"Prevent duplicate file creation in src directory\"\n      }\n    ]\n  }\n}",
+        "annotation": "Three hooks working together: SessionStart loads context for the session, PostToolUse nudges toward testing after test file edits, and PreToolUse prevents accidental duplicate files. Each hook supports the overall workflow rather than working in isolation."
+      }
+    }
+  },
+  {
+    "id": "hk-03-08",
+    "title": "Capstone: Build a Hook System for Your Project",
+    "type": "build",
+    "xp": 25,
+    "content": {
+      "explanation": "Now you build a complete hook system tailored to a real project. This is not about copying examples — it is about analyzing your project needs, identifying where automation helps, and writing hooks that match your workflow. A good hook system has three layers: safety (blocking dangerous operations), quality (enforcing standards automatically), and context (injecting useful information at the right moments).\n\nStart with safety hooks. What commands should never run in your project? What files should never be deleted or overwritten? What patterns are always a mistake? Write PreToolUse hooks for each one. Then add quality hooks. Does your project use a formatter? Add a PostToolUse hook to run it. Do you have coding conventions? Add a prompt-based hook to check edits against them. Finally, add context hooks. What does Claude need to know at session start? What reminders help after specific actions?\n\nThe capstone requirement is a settings.json file with at least five hooks across at least three different event types. Each hook needs a clear description explaining what it does and why. Test each hook by triggering its event and verifying the behavior. Document any hooks that interact with each other — the system should make sense as a whole, not just as individual pieces.",
+      "exercise": {
+        "instruction": "Build a complete hook system for your project (or a sample project). Your .claude/settings.json must include: (1) At least one SessionStart hook that prints useful project context, (2) At least two PreToolUse hooks — one command-based safety gate and one prompt-based review, (3) At least one PostToolUse hook for auto-formatting or auto-testing, (4) At least one Stop or PermissionRequest hook. Each hook must have a description field explaining its purpose. Paste your complete settings.json hooks configuration below.",
+        "inputType": "code",
+        "steps": [
+          "Identify 2-3 dangerous patterns specific to your project that should be blocked",
+          "Choose a formatter or linter that your project uses and set it as a PostToolUse hook",
+          "Write a SessionStart hook that prints git status and any project-specific context",
+          "Add a prompt-based PreToolUse hook for code review on edits to important files",
+          "Add a Stop or PermissionRequest hook for end-of-response validation or auto-approval",
+          "Test each hook by triggering its event in a Claude Code session",
+          "Verify that blocked actions are actually blocked and formatters actually run"
+        ],
+        "validation": {
+          "type": "contains_all",
+          "values": [
+            "SessionStart",
+            "PreToolUse",
+            "PostToolUse",
+            "description"
+          ],
+          "errorMessage": "Your hook system should include SessionStart, PreToolUse, and PostToolUse events, and every hook should have a description field."
+        }
+      }
+    }
+  }
+]
