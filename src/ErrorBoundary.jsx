@@ -27,8 +27,15 @@ export default class ErrorBoundary extends Component {
             Check browser console (F12) for details
           </p>
           <button onClick={() => this.setState({ hasError: false, error: null })}
-                  style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>
+                  style={{ padding: '0.5rem 1rem', cursor: 'pointer', marginRight: '0.5rem' }}>
             Try Again
+          </button>
+          <button onClick={() => {
+            localStorage.clear();
+            window.location.reload();
+          }}
+                  style={{ padding: '0.5rem 1rem', cursor: 'pointer', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '4px' }}>
+            Reset & Reload
           </button>
         </div>
       );
