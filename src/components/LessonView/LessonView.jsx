@@ -36,6 +36,9 @@ export default function LessonView({ moduleId, lessonId, onBack, onNavigate }) {
 
   if (!lesson) return null
 
+  // Debug: log full lesson data
+  console.log('LessonView rendering:', lessonId, JSON.stringify(lesson, null, 2).slice(0, 500))
+
   // Debug: log lesson data to find issues
   if (!lesson.content || typeof lesson.content !== 'object') {
     console.error('LessonView: Invalid lesson content', lessonId, lesson)
