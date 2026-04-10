@@ -5,6 +5,15 @@ import styles from './cards.module.css'
 export default function ExampleCard({ lesson, onComplete }) {
   const { codeExample } = lesson.content
 
+  if (typeof lesson.content.explanation !== 'string') {
+    console.error('ExampleCard: explanation is not a string', lesson.id, typeof lesson.content.explanation)
+    return (
+      <div style={{padding: '2rem', color: 'red'}}>
+        Error: Lesson "{lesson.id}" has invalid explanation type.
+      </div>
+    )
+  }
+
   return (
     <div className={styles.card}>
       <span className={styles.typeBadge}>Example</span>

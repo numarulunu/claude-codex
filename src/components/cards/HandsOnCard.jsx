@@ -9,6 +9,15 @@ export default function HandsOnCard({ lesson, onComplete }) {
   const { exercise, codeExample } = lesson.content
   const inputType = exercise?.inputType || 'confirm'
 
+  if (typeof lesson.content.explanation !== 'string') {
+    console.error('HandsOnCard: explanation is not a string', lesson.id, typeof lesson.content.explanation)
+    return (
+      <div style={{padding: '2rem', color: 'red'}}>
+        Error: Lesson "{lesson.id}" has invalid explanation type.
+      </div>
+    )
+  }
+
   const handleSubmit = () => {
     if (inputType === 'confirm') {
       onComplete()

@@ -36,6 +36,16 @@ export default function LessonView({ moduleId, lessonId, onBack, onNavigate }) {
 
   if (!lesson) return null
 
+  // Debug: log lesson data to find issues
+  if (!lesson.content || typeof lesson.content !== 'object') {
+    console.error('LessonView: Invalid lesson content', lessonId, lesson)
+    return (
+      <div style={{padding: '2rem', color: 'red'}}>
+        Error: Lesson "{lessonId}" has invalid content structure.
+      </div>
+    )
+  }
+
   const handleComplete = (isPerfect = false) => {
     if (completedLessons.includes(lessonId)) return
 

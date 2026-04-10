@@ -7,6 +7,15 @@ export default function BuildCard({ lesson, onComplete }) {
   const steps = lesson.content.exercise?.steps || []
   const [checked, setChecked] = useState(new Set())
 
+  if (typeof lesson.content.explanation !== 'string') {
+    console.error('BuildCard: explanation is not a string', lesson.id, typeof lesson.content.explanation)
+    return (
+      <div style={{padding: '2rem', color: 'red'}}>
+        Error: Lesson "{lesson.id}" has invalid explanation type.
+      </div>
+    )
+  }
+
   const toggleStep = (index) => {
     setChecked((prev) => {
       const next = new Set(prev)

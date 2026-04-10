@@ -8,6 +8,17 @@ export default function QuizCard({ lesson, onComplete, onQuizScore }) {
   const [selected, setSelected] = useState(null)
   const [submitted, setSubmitted] = useState(false)
   const choices = lesson.content.exercise?.choices || []
+
+  // Validate choices have text property
+  if (choices.length > 0 && choices[0].text === undefined) {
+    console.error('QuizCard: Invalid choices format', lesson.id, choices[0])
+    return (
+      <div style={{padding: '2rem', color: 'red'}}>
+        Error: Quiz "{lesson.id}" has invalid format. Expected choices with "text" property.
+      </div>
+    )
+  }
+
   const correctIndex = choices.findIndex((c) => c.correct)
 
   const handleSelect = (index) => {
