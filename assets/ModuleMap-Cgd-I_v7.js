@@ -1,6 +1,6 @@
-import { j as jsxRuntimeExports, r as reactExports, u as useProgressContext, g as getModuleProgress } from "./index-2hIqRojP.js";
+import { j as jsxRuntimeExports, r as reactExports, u as useProgressContext, g as getModuleProgress } from "./index-rEfxmL-f.js";
 import { l as loadModules } from "./curriculum-DNetKi3g.js";
-import "./vendor-B0z2PQZu.js";
+import "./vendor-DUI7kKlB.js";
 const ring = "_ring_1p1l5_1";
 const trackCircle = "_trackCircle_1p1l5_5";
 const progressCircle = "_progressCircle_1p1l5_10";
@@ -145,4 +145,4 @@ function ModuleMap({ onModuleClick }) {
 export {
   ModuleMap as default
 };
-//# sourceMappingURL=ModuleMap-BWjULkZs.js.map
+//# sourceMappingURL=ModuleMap-Cgd-I_v7.js.map

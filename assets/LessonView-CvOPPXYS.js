@@ -1,6 +1,6 @@
-import { j as jsxRuntimeExports, r as reactExports, u as useProgressContext } from "./index-2hIqRojP.js";
+import { j as jsxRuntimeExports, r as reactExports, u as useProgressContext } from "./index-rEfxmL-f.js";
 import { a as loadModuleLessons, l as loadModules } from "./curriculum-DNetKi3g.js";
-import "./vendor-B0z2PQZu.js";
+import "./vendor-DUI7kKlB.js";
 const termBox = "_termBox_1uibh_1";
 const term = "_term_1uibh_1";
 const definition = "_definition_1uibh_17";
@@ -572,4 +572,4 @@ function LessonView({ moduleId, lessonId, onBack, onNavigate }) {
 export {
   LessonView as default
 };
-//# sourceMappingURL=LessonView-D-Znzc3K.js.map
+//# sourceMappingURL=LessonView-CvOPPXYS.js.map

@@ -1,6 +1,6 @@
-import { r as reactExports, u as useProgressContext, g as getModuleProgress, j as jsxRuntimeExports } from "./index-2hIqRojP.js";
+import { r as reactExports, u as useProgressContext, g as getModuleProgress, j as jsxRuntimeExports } from "./index-rEfxmL-f.js";
 import { l as loadModules, a as loadModuleLessons } from "./curriculum-DNetKi3g.js";
-import "./vendor-B0z2PQZu.js";
+import "./vendor-DUI7kKlB.js";
 const container = "_container_1i0qu_1";
 const header = "_header_1i0qu_5";
 const backButton = "_backButton_1i0qu_9";
@@ -100,4 +100,4 @@ function LessonList({ moduleId, onBack, onLessonClick }) {
 export {
   LessonList as default
 };
-//# sourceMappingURL=LessonList-BqZJyV7u.js.map
+//# sourceMappingURL=LessonList-BUgCx9pj.js.map
