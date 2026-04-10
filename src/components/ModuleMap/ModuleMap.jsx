@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useProgressContext } from '../../context/ProgressContext'
 import { loadModules } from '../../utils/curriculum'
-import { isModuleUnlocked, getModuleProgress } from '../../utils/xp'
+import { getModuleProgress } from '../../utils/xp'
 import ProgressRing from '../ProgressRing/ProgressRing'
 import styles from './ModuleMap.module.css'
 
@@ -35,7 +35,7 @@ export default function ModuleMap({ onModuleClick }) {
 
       <div className={styles.path}>
         {modules.map((mod, i) => {
-          const unlocked = isModuleUnlocked(mod.id, modules, progress)
+          const unlocked = true // all modules accessible
           const percent = getModuleProgress(mod.id, mod.lessonCount, progress)
           const isComplete = percent >= 100
           const isCurrent = unlocked && !isComplete
@@ -52,8 +52,6 @@ export default function ModuleMap({ onModuleClick }) {
                 <div className={styles.nodeCircle}>
                   {isComplete ? (
                     <span className={styles.checkmark}>{'\u2713'}</span>
-                  ) : !unlocked ? (
-                    <span className={styles.lockIcon}>{'\uD83D\uDD12'}</span>
                   ) : (
                     <span>{MODULE_ICONS[mod.id] || '\uD83D\uDCD6'}</span>
                   )}
