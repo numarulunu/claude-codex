@@ -35,7 +35,7 @@ export default function LessonList({ moduleId, onBack, onLessonClick }) {
   function getLessonState(lesson, index) {
     if (completedSet.has(lesson.id)) return 'completed'
     if (index === firstIncompleteIndex) return 'current'
-    return 'locked'
+    return 'available'
   }
 
   if (!moduleMeta) return null
@@ -61,7 +61,7 @@ export default function LessonList({ moduleId, onBack, onLessonClick }) {
             <div
               key={lesson.id}
               className={`${styles.lessonItem} ${styles[state]}`}
-              onClick={() => state !== 'locked' && onLessonClick(lesson.id)}
+              onClick={() => onLessonClick(lesson.id)}
             >
               <div className={styles.lessonNumber}>
                 {state === 'completed' ? '\u2713' : i + 1}
