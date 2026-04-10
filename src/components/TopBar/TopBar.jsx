@@ -8,10 +8,15 @@ export default function TopBar({ onLogoClick }) {
 
   return (
     <header className={styles.topBar}>
-      <div className={styles.logo} onClick={onLogoClick}>
+      <button
+        type="button"
+        className={styles.logo}
+        onClick={onLogoClick}
+        aria-label="Go to home"
+      >
         <div className={styles.logoMark}>C</div>
         <span className={styles.logoText}>Claude Codex</span>
-      </div>
+      </button>
 
       <div className={styles.stats}>
         <button

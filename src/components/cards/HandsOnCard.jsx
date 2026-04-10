@@ -53,19 +53,22 @@ export default function HandsOnCard({ lesson, onComplete }) {
       )}
 
       <div className={styles.exerciseBox}>
-        <div className={styles.exerciseLabel}>Try it yourself</div>
-        <div className={styles.exerciseInstruction}>{exercise?.instruction}</div>
+        <div className={styles.exerciseLabel} id="exercise-label">Try it yourself</div>
+        <div className={styles.exerciseInstruction} id="exercise-instruction">{exercise?.instruction}</div>
 
         {inputType === 'textarea' || inputType === 'paste' ? (
           <textarea
+            id="exercise-input"
             className={styles.textarea}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder={inputType === 'paste' ? 'Paste your output here...' : 'Type your answer...'}
+            aria-label="Your answer"
+            aria-describedby="exercise-instruction"
           />
         ) : null}
 
-        {error && <div className={styles.validationError}>{error}</div>}
+        {error && <div className={styles.validationError} role="alert">{error}</div>}
       </div>
 
       <button className={styles.continueButton} onClick={handleSubmit}>

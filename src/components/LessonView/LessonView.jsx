@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useProgressContext } from '../../context/ProgressContext'
 import { loadModuleLessons, loadModules } from '../../utils/curriculum'
 import ConceptCard from '../cards/ConceptCard'
@@ -22,6 +22,7 @@ export default function LessonView({ moduleId, lessonId, onBack, onNavigate }) {
   const [modules, setModules] = useState([])
   const [xpPopup, setXpPopup] = useState(null)
   const [showCelebration, setShowCelebration] = useState(false)
+  const pendingNavRef = useRef(false)
   const { progress, completeLesson, completeModule, saveQuizScore } = useProgressContext()
 
   useEffect(() => {
@@ -36,6 +37,8 @@ export default function LessonView({ moduleId, lessonId, onBack, onNavigate }) {
   if (!lesson) return null
 
   const handleComplete = (isPerfect = false) => {
+    if (completedLessons.includes(lessonId)) return
+
     completeLesson(moduleId, lessonId, lesson, isPerfect)
 
     // Show XP popup
@@ -44,17 +47,25 @@ export default function LessonView({ moduleId, lessonId, onBack, onNavigate }) {
     setXpPopup(earned + bonus)
     setTimeout(() => setXpPopup(null), 2200)
 
-    // Check if module is complete
-    const updatedCompleted = [...completedLessons, lessonId]
+    // Mark that navigation/completion should be decided by the effect below,
+    // which reads the *updated* progress state — avoiding the stale-snapshot bug.
+    pendingNavRef.current = true
+  }
+
+  // Post-completion effect: runs after progress state actually updates.
+  useEffect(() => {
+    if (!pendingNavRef.current) return
+    if (!completedLessons.includes(lessonId)) return
+    pendingNavRef.current = false
+
     const moduleMeta = modules.find((m) => m.id === moduleId)
-    if (moduleMeta && updatedCompleted.length >= moduleMeta.lessonCount) {
+    if (moduleMeta && completedLessons.length >= moduleMeta.lessonCount) {
       completeModule(moduleId)
       setShowCelebration(true)
       return
     }
 
-    // Navigate to next lesson
-    setTimeout(() => {
+    const t = setTimeout(() => {
       if (lessonIndex < lessons.length - 1) {
         const nextLesson = lessons[lessonIndex + 1]
         onNavigate(`/module/${moduleId}/lesson/${nextLesson.id}`)
@@ -62,7 +73,8 @@ export default function LessonView({ moduleId, lessonId, onBack, onNavigate }) {
         onBack()
       }
     }, 800)
-  }
+    return () => clearTimeout(t)
+  }, [completedLessons, lessonId, lessonIndex, lessons, modules, moduleId, completeModule, onBack, onNavigate])
 
   const handleQuizScore = (qLessonId, score, total) => {
     saveQuizScore(qLessonId, score, total)
@@ -95,9 +107,11 @@ export default function LessonView({ moduleId, lessonId, onBack, onNavigate }) {
         onQuizScore={handleQuizScore}
       />
 
-      {xpPopup !== null && (
-        <div className={styles.xpEarned}>+{xpPopup} XP</div>
-      )}
+      <div className={styles.xpLive} role="status" aria-live="polite" aria-atomic="true">
+        {xpPopup !== null && (
+          <div className={styles.xpEarned}>+{xpPopup} XP</div>
+        )}
+      </div>
 
       {showCelebration && (
         <CelebrationOverlay

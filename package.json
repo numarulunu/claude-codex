@@ -1,11 +1,10 @@
 {
   "name": "claude-codex",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs"
-  },
+  "description": "Duolingo-style learning app for mastering Claude Code.",
+  "author": "Ionut Rosu",
+  "license": "MIT",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -13,10 +12,13 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
+  "keywords": [
+    "claude",
+    "claude-code",
+    "learning",
+    "react",
+    "vite"
+  ],
   "dependencies": {
     "react": "^19.2.4",
     "react-dom": "^19.2.4"

@@ -143,7 +143,7 @@
       "explanation": "Claude Code has several permission modes that control how much autonomy Claude gets. You set the mode when launching Claude or change it during a session.\n\n**Default mode** is what you start with. Claude can read files freely but asks permission before editing files or running commands. This is the safest mode for getting started — you see everything before it happens.\n\n**Plan mode** makes Claude read-only. It can explore your codebase, analyze code, and make recommendations, but it cannot edit any files or run any commands. This is useful when you want Claude to audit or review code without any risk of changes.\n\n**Auto mode** gives Claude more freedom. It uses a safety classifier to decide which actions are safe to run without asking. Read-only commands and safe edits go through automatically, while potentially dangerous operations still require approval. This is the productivity sweet spot for experienced users.\n\n**acceptEdits mode** auto-approves file edits but still asks before running Bash commands. This is handy when you trust Claude's code changes but want to review every command execution.",
       "exercise": {
         "instruction": "Which permission mode would you use if you want Claude to analyze your codebase and suggest improvements, but you do NOT want it to make any changes to files or run any commands?",
-        "inputType": "multipleChoice",
+        "inputType": "multi-select",
         "choices": [
           {
             "text": "Default mode",
@@ -207,7 +207,7 @@
       "explanation": "Claude Code supports multiple models, and choosing the right one for the task saves both time and money. The three main models are Opus, Sonnet, and Haiku — named from most capable to most lightweight.\n\n**Opus** is the most powerful model. It excels at complex reasoning, large refactors, architectural decisions, and tasks that require understanding many files at once. It's slower and costs more per token, so you use it when the task genuinely needs deep thinking.\n\n**Sonnet** is the balanced workhorse. It's fast, capable, and significantly cheaper than Opus. For most day-to-day coding — writing functions, fixing bugs, writing tests, explaining code — Sonnet handles it well. This is your default for routine work.\n\n**Haiku** is the speed demon. It's the fastest and cheapest model, great for simple tasks like generating boilerplate, renaming variables, formatting code, or quick lookups. It won't handle complex multi-file reasoning well, but it's perfect when you need a fast answer.\n\nYou switch models mid-session with the `/model` command. The `/effort` command adjusts how much thinking a model does — you can set it to low, medium, or high. Low effort with Sonnet is great for trivial tasks; high effort with Opus is for the hardest problems.",
       "exercise": {
         "instruction": "You need to refactor a complex authentication system that spans 12 files, with intricate security logic and edge cases. Which model should you use?",
-        "inputType": "multipleChoice",
+        "inputType": "multi-select",
         "choices": [
           {
             "text": "Haiku — it's the fastest, so you'll get results quicker",

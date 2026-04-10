@@ -11,6 +11,11 @@ export default function ProgressRing({ size = 64, strokeWidth = 4, percent = 0 }
       className={`${styles.ring} ${isComplete ? styles.completed : ''}`}
       width={size}
       height={size}
+      role="progressbar"
+      aria-valuenow={Math.round(percent)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label={`Progress: ${Math.round(percent)}%`}
     >
       <circle
         className={styles.trackCircle}

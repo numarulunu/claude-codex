@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useProgressContext } from '../../context/ProgressContext'
 import { loadModules, loadModuleLessons } from '../../utils/curriculum'
 import { getModuleProgress } from '../../utils/xp'
@@ -26,14 +26,15 @@ export default function LessonList({ moduleId, onBack, onLessonClick }) {
   const completedLessons = progress.modules[moduleId]?.lessonsCompleted || []
   const percent = moduleMeta ? getModuleProgress(moduleId, moduleMeta.lessonCount, progress) : 0
 
+  const completedSet = useMemo(() => new Set(completedLessons), [completedLessons])
+  const firstIncompleteIndex = useMemo(
+    () => lessons.findIndex((l) => !completedSet.has(l.id)),
+    [lessons, completedSet]
+  )
+
   function getLessonState(lesson, index) {
-    if (completedLessons.includes(lesson.id)) return 'completed'
-
-    const firstIncompleteIndex = lessons.findIndex(
-      (l) => !completedLessons.includes(l.id)
-    )
+    if (completedSet.has(lesson.id)) return 'completed'
     if (index === firstIncompleteIndex) return 'current'
-
     return 'locked'
   }
 

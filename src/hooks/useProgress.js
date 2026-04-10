@@ -8,16 +8,26 @@ const DEFAULT_PROGRESS = {
   quizScores: {},
 }
 
+function mergeProgress(parsed) {
+  return {
+    ...DEFAULT_PROGRESS,
+    ...parsed,
+    streak: { ...DEFAULT_PROGRESS.streak, ...(parsed?.streak || {}) },
+    modules: { ...(parsed?.modules || {}) },
+    quizScores: { ...(parsed?.quizScores || {}) },
+  }
+}
+
 export function loadProgress() {
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (stored) {
-      return { ...DEFAULT_PROGRESS, ...JSON.parse(stored) }
+      return mergeProgress(JSON.parse(stored))
     }
   } catch (e) {
     console.warn('Failed to load progress:', e)
   }
-  return { ...DEFAULT_PROGRESS }
+  return { ...DEFAULT_PROGRESS, streak: { ...DEFAULT_PROGRESS.streak } }
 }
 
 export function saveProgress(progress) {
@@ -44,8 +54,8 @@ export function importProgress(file) {
     reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target.result)
-        if (data.version) {
-          resolve({ ...DEFAULT_PROGRESS, ...data })
+        if (typeof data?.version === 'number' && data.version >= 1) {
+          resolve(mergeProgress(data))
         } else {
           reject(new Error('Invalid progress file'))
         }

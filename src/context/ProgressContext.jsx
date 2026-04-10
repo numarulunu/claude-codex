@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from 'react'
+import { createContext, useContext, useState, useCallback, useMemo } from 'react'
 import { loadProgress, saveProgress } from '../hooks/useProgress'
 import { awardXp, updateStreak } from '../utils/xp'
 
@@ -82,22 +82,24 @@ export function ProgressProvider({ children }) {
   }, [updateProgress])
 
   const resetProgress = useCallback(() => {
-    const fresh = loadProgress()
     localStorage.removeItem('claude-codex-progress')
-    setProgress(fresh)
+    setProgress(loadProgress())
   }, [])
 
+  const value = useMemo(
+    () => ({
+      progress,
+      completeLesson,
+      completeModule,
+      saveQuizScore,
+      resetProgress,
+      updateProgress,
+    }),
+    [progress, completeLesson, completeModule, saveQuizScore, resetProgress, updateProgress]
+  )
+
   return (
-    <ProgressContext.Provider
-      value={{
-        progress,
-        completeLesson,
-        completeModule,
-        saveQuizScore,
-        resetProgress,
-        updateProgress,
-      }}
-    >
+    <ProgressContext.Provider value={value}>
       {children}
     </ProgressContext.Provider>
   )

@@ -4,7 +4,6 @@
     "title": "What n8n Is — Visual Automation in Plain Language",
     "type": "concept",
     "xp": 10,
-    "bonusXp": 5,
     "content": {
       "explanation": "n8n (pronounced n-eight-n) is a visual workflow automation tool. Think of it as connecting different apps and services without writing code. You drag boxes (nodes) onto a canvas, draw lines between them, and data flows from one to the next.\n\nWhat makes n8n different from Zapier or Make: it is open-source and self-hosted. Run it on your own server, your data never leaves your infrastructure, and no per-automation fees. Your automations scale with your server, not a subscription tier.\n\nn8n has a visual editor in your browser. Build workflows by adding nodes, configuring them, connecting them. Activate and it runs automatically. Every trigger fires, the workflow executes all steps in order.",
       "terminology": [
@@ -33,7 +32,6 @@
     "title": "n8n Core Concepts — Nodes, Workflows, Triggers",
     "type": "concept",
     "xp": 10,
-    "bonusXp": 5,
     "content": {
       "explanation": "Three concepts make up everything in n8n: nodes, workflows, and triggers. A node is a single action — send email, read spreadsheet, make HTTP request, transform data. Each takes data in, does something, passes data out.\n\nA workflow chains nodes together. Data flows left to right. You can branch (if/else), merge branches, and loop. Simple as two nodes or complex as fifty.\n\nTriggers are special nodes that start a workflow. They listen for events: webhook data, cron schedule, file change, new email. Without a trigger, a workflow just sits there. You can also trigger manually for testing.",
       "terminology": [
@@ -62,7 +60,6 @@
     "title": "Calling Claude from n8n via HTTP Node",
     "type": "hands-on",
     "xp": 15,
-    "bonusXp": 5,
     "content": {
       "explanation": "The most direct way to use Claude in n8n: HTTP Request node calling the Anthropic Messages API. Configure it to POST to https://api.anthropic.com/v1/messages with your API key in headers and prompt in the body.\n\nYou need three headers: x-api-key (your Anthropic key), anthropic-version (2023-06-01), and Content-Type: application/json. The response includes Claude text in content[0].text.\n\nStore your API key as an n8n credential (Settings > Credentials), not hardcoded. Once working, feed any data from previous nodes into the prompt using n8n expressions like {{ $json.fieldName }}.",
       "terminology": [
@@ -100,7 +97,6 @@
     "title": "Claude as a Processing Node in a Workflow",
     "type": "example",
     "xp": 10,
-    "bonusXp": 5,
     "content": {
       "explanation": "The real power: Claude is one step in a larger chain. Data comes from a form, spreadsheet, or API. Claude processes it (classifies, summarizes, extracts, rewrites). The result goes to email, database, or Slack. Claude becomes a smart processing node in the middle.\n\nExample: customer feedback pipeline. Google Sheets trigger detects new review. Claude classifies as positive/negative/neutral, extracts topic, suggests response. A router sends positive reviews to testimonials, negative ones to support alerts.\n\nKey technique: prompt templating. Instead of hardcoding prompts, inject data from previous nodes using n8n expressions. The prompt becomes a reusable template.",
       "terminology": [
@@ -129,7 +125,6 @@
     "title": "Your First Claude-Powered n8n Workflow",
     "type": "hands-on",
     "xp": 15,
-    "bonusXp": 5,
     "content": {
       "explanation": "Build a complete workflow: receive a webhook with text, have Claude summarize it, send the summary back. Start with a Webhook node as trigger — creates a URL you can POST to. Connect to an HTTP Request node calling the Anthropic API. Add a Respond to Webhook node to return the summary.\n\nTest by sending a POST request to your webhook URL with JSON body containing a text field. Watch data flow through each node in the execution view — raw input, Claude response, final output. If anything fails, n8n shows exactly which node errored.",
       "terminology": [
@@ -167,7 +162,6 @@
     "title": "Webhook Triggers — Events That Start Automations",
     "type": "concept",
     "xp": 10,
-    "bonusXp": 5,
     "content": {
       "explanation": "Webhooks are the most flexible trigger. A webhook creates a URL. Any external system sending data to that URL triggers your workflow. Connect n8n to anything making HTTP requests — forms, payment processors, CRMs, curl.\n\nCommon use: form submissions. Someone fills a contact form, data hits your n8n webhook. Claude qualifies the lead, composes a response, adds to CRM. All automatic from one form submission.\n\nBeyond webhooks: Schedule triggers (cron), App triggers (new email, new Stripe payment, new Sheet row), and Polling triggers (periodic checks). Pick the trigger matching your \"when.\"",
       "terminology": [
@@ -196,7 +190,6 @@
     "title": "Having Claude Generate n8n Workflow JSON",
     "type": "hands-on",
     "xp": 15,
-    "bonusXp": 5,
     "content": {
       "explanation": "Claude can generate complete n8n workflow JSON from a natural language description. Instead of manually dragging nodes, describe what you want in plain English. Claude produces importable JSON you paste into n8n.\n\nn8n workflows are stored as JSON — every node, connection, configuration. Claude translates descriptions like \"when I get a Stripe payment, send a thank-you email\" into complete workflow definitions.\n\nWorkflow: (1) describe to Claude, (2) Claude generates JSON, (3) import via n8n Import from JSON, (4) configure credentials Claude cannot know, (5) test and activate. Cuts build time from 30 minutes to 2 minutes.",
       "terminology": [
@@ -234,7 +227,6 @@
     "title": "Natural Language to Automation",
     "type": "example",
     "xp": 10,
-    "bonusXp": 5,
     "content": {
       "explanation": "Claude + n8n = describing automations in plain English and having them built. Not just generating JSON once — an ongoing workflow where you think in business terms and AI translates to technical implementation.\n\nThree levels. Level 1: Claude generates workflow JSON, you import. Level 2: Claude explains nodes and helps debug. Level 3: Claude lives inside the workflow making runtime decisions (classifying, writing, extracting).\n\nThis shifts who can build automations. You do not need to memorize node libraries or API docs. Clearly describe what happens, when, and the output. Claude handles translation. Skill shifts from \"configuring tools\" to \"knowing what to automate.\"",
       "terminology": [
@@ -263,7 +255,6 @@
     "title": "Error Handling and Retry Logic",
     "type": "concept",
     "xp": 10,
-    "bonusXp": 5,
     "content": {
       "explanation": "Automations fail. APIs go down, rate limits hit, data arrives malformed. The difference between toy and production: error handling. n8n gives tools to catch errors, retry, and alert.\n\nEvery node can have an error workflow attached. When a node fails, the error routes to a separate workflow — Slack alert, log, or retry. For Claude API: most common errors are rate limits (429) and timeouts. Both fixable with retries.\n\nn8n has built-in retry logic. Set 2-3 retries with exponential backoff (1s, 2s, 4s). Add a timeout to HTTP Request nodes — if Claude takes over 30 seconds, fail and retry rather than hanging forever.",
       "terminology": [
@@ -292,7 +283,6 @@
     "title": "Connecting n8n to Your Stack (Stripe, Google, Email)",
     "type": "example",
     "xp": 10,
-    "bonusXp": 5,
     "content": {
       "explanation": "n8n has built-in nodes for hundreds of services: Stripe, Google Sheets, Gmail, Slack, Notion, Airtable, Mailchimp, Discord, Telegram. Each handles authentication and API details. Configure a node with credentials and use it like a building block.\n\nPattern for any service: (1) create credentials in n8n Settings, (2) add the service node, (3) select credential and configure, (4) connect to other nodes.\n\nCommon business pattern: Trigger (Stripe payment or webhook) then Claude processes then Output to multiple places (Sheets for records, Gmail for communication, Slack for notifications). This handles 80% of small business automations. The AI in the middle is what makes it intelligent.",
       "terminology": [
@@ -321,7 +311,6 @@
     "title": "Advanced: Multi-Step AI Chains in n8n",
     "type": "example",
     "xp": 10,
-    "bonusXp": 5,
     "content": {
       "explanation": "Sometimes one Claude call is not enough. Complex tasks benefit from multiple AI steps, where each output feeds the next prompt. This is chaining, and n8n makes it visual — each Claude call is a separate node.\n\nExample: support email processing. Step 1: extract facts (product, issue, urgency). Step 2: find solutions from knowledge base. Step 3: draft response using original email + solutions. Each gets a focused prompt, producing better results than one massive prompt.\n\nAnother pattern: generate-then-evaluate. Claude generates in one node, a second evaluates against guidelines. Failed checks loop back. This self-correcting chain produces higher quality than a single pass.",
       "terminology": [
@@ -350,7 +339,6 @@
     "title": "Capstone: Build a Lead-to-Student Automation Pipeline",
     "type": "build",
     "xp": 25,
-    "bonusXp": 5,
     "content": {
       "explanation": "Build a complete lead-to-student pipeline in n8n with Claude as the intelligence layer. From \"someone shows interest\" to \"onboarded student\" with minimal manual intervention.\n\nFour stages. Stage 1 (Capture): webhook receives lead form data. Stage 2 (Qualify): Claude classifies as serious/casual/spam and generates personalized response. Stage 3 (Route): switch node sends serious leads to sales path, casual to nurture path. Stage 4 (Record): every lead logged to Google Sheets.\n\nThis is production-grade. Real businesses run pipelines like this. Claude intelligence in the middle reads what the person wrote, understands intent, and crafts a personal response. Build it, test with sample submissions, and you have a working business tool.",
       "terminology": [

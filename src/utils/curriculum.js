@@ -1,19 +1,23 @@
 const cache = {}
 
+async function fetchJson(url) {
+  const res = await fetch(url)
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status} fetching ${url}`)
+  }
+  return res.json()
+}
+
 export async function loadModules() {
   if (cache.modules) return cache.modules
-
-  const res = await fetch('/curriculum/modules.json')
-  const data = await res.json()
+  const data = await fetchJson('/curriculum/modules.json')
   cache.modules = data
   return data
 }
 
 export async function loadModuleLessons(moduleId) {
   if (cache[moduleId]) return cache[moduleId]
-
-  const res = await fetch(`/curriculum/${moduleId}.json`)
-  const data = await res.json()
+  const data = await fetchJson(`/curriculum/${moduleId}.json`)
   cache[moduleId] = data
   return data
 }

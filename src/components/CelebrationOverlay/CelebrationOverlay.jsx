@@ -1,9 +1,27 @@
-import { useMemo } from 'react'
+import { useMemo, useRef, useEffect } from 'react'
 import styles from './CelebrationOverlay.module.css'
 
 const COLORS = ['#d97757', '#4caf50', '#ffd700', '#e74c3c', '#3498db', '#9b59b6']
 
 export default function CelebrationOverlay({ moduleName, onContinue }) {
+  const continueRef = useRef(null)
+  const previouslyFocusedRef = useRef(null)
+
+  useEffect(() => {
+    previouslyFocusedRef.current = document.activeElement
+    continueRef.current?.focus()
+    const onKey = (e) => {
+      if (e.key === 'Escape') onContinue()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      if (previouslyFocusedRef.current && typeof previouslyFocusedRef.current.focus === 'function') {
+        previouslyFocusedRef.current.focus()
+      }
+    }
+  }, [onContinue])
+
   const particles = useMemo(() => {
     return Array.from({ length: 30 }, (_, i) => ({
       id: i,
@@ -32,11 +50,16 @@ export default function CelebrationOverlay({ moduleName, onContinue }) {
         ))}
       </div>
       <div className={styles.overlay}>
-        <div className={styles.modal}>
-          <div className={styles.trophy}>{'\uD83C\uDFC6'}</div>
-          <h2 className={styles.title}>Module Complete!</h2>
+        <div
+          className={styles.modal}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="celebration-title"
+        >
+          <div className={styles.trophy} aria-hidden="true">{'\uD83C\uDFC6'}</div>
+          <h2 className={styles.title} id="celebration-title">Module Complete!</h2>
           <p className={styles.subtitle}>{moduleName}</p>
-          <button className={styles.continueButton} onClick={onContinue}>
+          <button ref={continueRef} className={styles.continueButton} onClick={onContinue}>
             Continue
           </button>
         </div>

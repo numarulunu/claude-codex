@@ -40,10 +40,14 @@ export default function QuizCard({ lesson, onComplete, onQuizScore }) {
       <div className={styles.explanation}>{lesson.content.explanation}</div>
       <TermTooltip terminology={lesson.content.terminology} />
 
-      <div className={styles.choices}>
+      <div className={styles.choices} role="radiogroup" aria-label="Answer choices">
         {choices.map((choice, i) => (
           <button
             key={i}
+            type="button"
+            role="radio"
+            aria-checked={selected === i}
+            disabled={submitted}
             className={`${styles.choice} ${getChoiceClass(i)}`}
             onClick={() => handleSelect(i)}
           >
@@ -55,6 +59,7 @@ export default function QuizCard({ lesson, onComplete, onQuizScore }) {
 
       {submitted && selected !== null && (
         <div
+          role="alert"
           className={`${styles.feedbackBox} ${
             selected === correctIndex ? styles.feedbackCorrect : styles.feedbackWrong
           }`}

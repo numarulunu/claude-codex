@@ -4,7 +4,6 @@
     "title": "The --print Flag — Claude as a Script Tool",
     "type": "concept",
     "xp": 10,
-    "bonusXp": 5,
     "content": {
       "explanation": "By default, Claude Code runs interactively — you type, it responds, you go back and forth. But what if you want Claude to answer one question and shut up? That is what the `--print` flag (short: `-p`) does. It turns Claude into a non-interactive script tool: you give it a prompt, it prints the answer to stdout, and it exits.\n\nThis is the bridge between \"talking to an AI\" and \"using an AI inside your programs.\" When you run `claude -p \"explain what a Dockerfile does\"`, the output goes straight to your terminal — which means it can also go into a file, a pipe, or another command. Claude becomes just another Unix tool, like `grep` or `jq`.\n\nThe `--print` flag also changes how permissions work. Since nobody is sitting there to click \"Allow,\" Claude runs with no tool use by default in print mode. It only generates text. If you need it to use tools (read files, run commands), you explicitly allow them with `--allowedTools`. This keeps automated runs safe.",
       "terminology": [
@@ -33,7 +32,6 @@
     "title": "JSON Output and Structured Responses",
     "type": "example",
     "xp": 10,
-    "bonusXp": 5,
     "content": {
       "explanation": "Plain text is fine for humans, but scripts need structure. `--output-format json` wraps the response in a JSON object you can parse with `jq` or any language.\n\n`--output-format stream-json` gives streaming JSON blocks as Claude generates. Useful for real-time integrations processing output as it arrives.\n\nThe most powerful option: `--json-schema`. Pass a schema, and Claude outputs JSON matching your exact structure. Define fields, types, and required properties — Claude conforms. This turns Claude from \"generates text that might be JSON\" into \"generates validated, typed data structures.\"",
       "terminology": [
@@ -62,7 +60,6 @@
     "title": "Piping Data Into Claude",
     "type": "hands-on",
     "xp": 15,
-    "bonusXp": 5,
     "content": {
       "explanation": "Unix pipes let you send output of one command into another. Pipe any text into `claude -p` and it becomes part of the prompt. Any text-producing command (`cat`, `curl`, `git diff`, `docker logs`) can feed directly into Claude.\n\nPiped content arrives as stdin, prepended to your prompt. `cat error.log | claude -p \"what went wrong?\"` sends the full log followed by your question. No copy-paste needed — data flows directly from source into Claude.\n\nContext limits still apply. For a 50,000-line log, filter first — use `tail -100`, `grep ERROR`, or `head -500` before piping. Send the relevant slice, not the haystack.",
       "terminology": [
@@ -100,7 +97,6 @@
     "title": "Chaining Claude in Shell Workflows",
     "type": "example",
     "xp": 10,
-    "bonusXp": 5,
     "content": {
       "explanation": "Now that Claude produces output non-interactively, it becomes a chain link. Put Claude between other commands. `git diff | claude -p \"write a commit message\" | git commit -F -`: diff flows in, commit message flows out, git commit receives it. Three commands, zero typing.\n\nUse command substitution with `` to embed Claude output: `mkdir `. Claude suggests, jq extracts, mkdir creates. Anywhere you put static text, you can put Claude-generated text.",
       "terminology": [
@@ -129,7 +125,6 @@
     "title": "Batch Processing Files with Claude",
     "type": "hands-on",
     "xp": 15,
-    "bonusXp": 5,
     "content": {
       "explanation": "When many files need the same treatment, shell loops run Claude on every file automatically. A for loop iterates files and calls Claude once per file.\n\nTwo limits: use --max-turns 1 to prevent multi-turn reasoning. And add sleep 1 between iterations for rate limits. Test on 2-3 files before running on 200.",
       "terminology": [
@@ -167,7 +162,6 @@
     "title": "CI/CD Integration — Claude in GitHub Actions",
     "type": "concept",
     "xp": 10,
-    "bonusXp": 5,
     "content": {
       "explanation": "CI/CD automatically runs tasks when you push code. GitHub Actions is the most common platform. Since Claude runs non-interactively, it fits into CI/CD pipelines.\n\nBest use case: automated PR review. On pull request, a GitHub Action diffs against main, pipes into Claude, posts review as a PR comment.\n\nRequires an Anthropic API key as a GitHub Actions secret. The --max-turns flag is critical — no looping endlessly in CI.",
       "terminology": [
@@ -196,7 +190,6 @@
     "title": "Remote Sessions and Scheduling",
     "type": "hands-on",
     "xp": 15,
-    "bonusXp": 5,
     "content": {
       "explanation": "Claude Code does not need your laptop. Run sessions on remote machines or schedule them like cron with AI. Nightly audits, weekly doc updates, daily log analysis while you sleep.\n\nThe /schedule command sets up recurring cloud tasks. Define what Claude does, when (cron syntax), which repo. Claude spins up a remote session, executes, you review later.\n\nFor one-off remote work, SSH into a server and run claude -p. Combine with tmux to keep sessions alive. Claude just needs a terminal and an API key.",
       "terminology": [
@@ -234,7 +227,6 @@
     "title": "Capstone: Build an Automated Processing Pipeline",
     "type": "build",
     "xp": 25,
-    "bonusXp": 5,
     "content": {
       "explanation": "Build a real shell pipeline using Claude as a processing step. Take real-world input, process through Claude, produce useful output.\n\nThree stages: input collection, AI processing, output handling. Demonstrate at least two module techniques.\n\nProject ideas: A) git changelog generator. B) code review script. C) doc freshness checker.",
       "terminology": [
