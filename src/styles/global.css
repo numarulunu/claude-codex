@@ -28,6 +28,8 @@ button {
   cursor: pointer;
   border: none;
   font-family: inherit;
+  color: inherit;
+  background: none;
 }
 
 img {
