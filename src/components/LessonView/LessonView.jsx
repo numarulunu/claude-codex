@@ -96,6 +96,20 @@ export default function LessonView({ moduleId, lessonId, onBack, onNavigate }) {
   const CardComponent = CARD_COMPONENTS[lesson.type]
   if (!CardComponent) return <div>Unknown lesson type: {lesson.type}</div>
 
+  // TEMP DEBUG: Try rendering just the title first
+  const debugMode = true;
+  if (debugMode) {
+    return (
+      <div style={{padding: '2rem'}}>
+        <h1>Debug Mode</h1>
+        <p>Lesson ID: {String(lesson.id)}</p>
+        <p>Lesson Type: {String(lesson.type)}</p>
+        <p>Lesson Title: {String(lesson.title)}</p>
+        <button onClick={onBack}>Back</button>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
