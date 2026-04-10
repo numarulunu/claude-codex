@@ -1,4 +1,5 @@
 const cache = {}
+const base = import.meta.env.BASE_URL
 
 async function fetchJson(url) {
   const res = await fetch(url)
@@ -10,14 +11,14 @@ async function fetchJson(url) {
 
 export async function loadModules() {
   if (cache.modules) return cache.modules
-  const data = await fetchJson('/curriculum/modules.json')
+  const data = await fetchJson(`${base}curriculum/modules.json`)
   cache.modules = data
   return data
 }
 
 export async function loadModuleLessons(moduleId) {
   if (cache[moduleId]) return cache[moduleId]
-  const data = await fetchJson(`/curriculum/${moduleId}.json`)
+  const data = await fetchJson(`${base}curriculum/${moduleId}.json`)
   cache[moduleId] = data
   return data
 }
