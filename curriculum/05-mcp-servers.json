@@ -1,0 +1,315 @@
+[
+  {
+    "id": "mc-05-01",
+    "title": "What MCP Is — In Plain Language",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "MCP stands for Model Context Protocol. It is a standard — like USB for plugging devices into your computer — but instead of devices, it lets Claude plug into external tools and data sources. Without MCP, Claude can only use its built-in tools (Read, Edit, Bash, etc.). With MCP, you can connect Claude to Notion, Google Sheets, Slack, databases, and hundreds of other services.\n\nHere is the key idea: MCP servers are small programs that run on your machine (or remotely) and act as translators. Claude says it wants to search Notion, the MCP server takes that request, talks to the Notion API, and hands the result back to Claude. Claude never touches Notion directly — the MCP server handles all the messy API details.\n\nThink of it like hiring a personal assistant who speaks a foreign language. You tell them what you want in English (your prompt), they translate it into the right language (API calls), do the work, and report back in English (structured results). MCP servers are those assistants — one for each service you want Claude to talk to.",
+      "terminology": [
+        {
+          "term": "MCP",
+          "definition": "Model Context Protocol — a standard that lets AI models like Claude connect to external tools and data sources through a unified interface."
+        },
+        {
+          "term": "MCP Server",
+          "definition": "A small program that runs locally or remotely and exposes specific tools or resources to Claude. Each server typically connects to one external service."
+        },
+        {
+          "term": "Protocol",
+          "definition": "A set of rules for how two systems communicate. MCP defines the rules for how Claude talks to external tool servers."
+        }
+      ]
+    }
+  },
+  {
+    "id": "mc-05-02",
+    "title": "How Claude Talks to External Tools Through MCP",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "When Claude Code starts, it reads your MCP configuration and launches the MCP servers you have defined. Each server advertises a list of tools it provides — for example, a GitHub MCP server might offer tools like search_repos, create_issue, and list_pull_requests. Claude sees all these tools just like its built-in ones.\n\nThe communication flow has four steps. First, Claude decides it needs to use an MCP tool (based on your prompt). Second, it sends a structured request to the right MCP server with the tool name and parameters. Third, the MCP server executes the action — hitting an API, querying a database, reading a file system. Fourth, the server sends the result back to Claude, who incorporates it into its response.\n\nEvery MCP tool call works through the same permission system as built-in tools. Claude asks for your approval before running anything destructive. You will see the MCP tool calls labeled in your terminal just like regular tool calls, so nothing happens behind your back.",
+      "terminology": [
+        {
+          "term": "Tool Advertisement",
+          "definition": "When an MCP server starts, it tells Claude what tools it offers, along with descriptions and parameter schemas."
+        },
+        {
+          "term": "Structured Request",
+          "definition": "A formatted message Claude sends to an MCP server specifying which tool to call and what arguments to pass."
+        },
+        {
+          "term": "Permission System",
+          "definition": "The approval mechanism that requires you to confirm before Claude runs any tool that could change data or make external requests."
+        }
+      ]
+    }
+  },
+  {
+    "id": "mc-05-03",
+    "title": "Installing Your First MCP Server",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "The fastest way to add an MCP server is through the Claude Code CLI. The claude mcp add command registers a new server in your settings. You give it a name, a command to run, and any arguments it needs. Claude Code handles the rest — it will start the server automatically when you begin a session.\n\nLet us install the filesystem MCP server as your first one. This server gives Claude the ability to read and write files outside your current project directory — useful when you need Claude to work across multiple folders. The server is an npm package that runs via npx, so you do not need to install anything globally.\n\nAfter adding the server, restart Claude Code (or start a new session). You should see the new MCP tools available.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Add the filesystem MCP server\nclaude mcp add filesystem -- npx -y @modelcontextprotocol/server-filesystem ~/Documents\n\n# Verify it was added\nclaude mcp list\n\n# Start a new session\nclaude",
+        "annotation": "The first command registers a filesystem MCP server. The second confirms it is listed. The third starts a session where the new tools are available."
+      },
+      "exercise": {
+        "instruction": "Add the filesystem MCP server. Run claude mcp list and confirm you see it listed. Start a new Claude session and use the filesystem server.",
+        "inputType": "confirm"
+      }
+    }
+  },
+  {
+    "id": "mc-05-04",
+    "title": "MCP vs API Calls — When to Use Which",
+    "type": "quiz",
+    "xp": 10,
+    "bonusXp": 5,
+    "content": {
+      "explanation": "MCP servers and direct API calls both let Claude interact with external services. But they serve different purposes. MCP servers are persistent connections that expose a clean set of tools — Claude does not need to know the API details, it just calls the tool. Direct API calls give you full control but require Claude to construct the right HTTP request every time.\n\nUse MCP when: you will interact with a service repeatedly across many sessions, when you want a clean tool interface, or when an MCP server already exists. Use direct API calls when: you need a one-off request, when no MCP server exists, or when you need very fine-grained control.\n\nA good rule of thumb: if you find yourself writing the same curl command in multiple sessions, that is a signal to find or build an MCP server for it.",
+      "terminology": [
+        {
+          "term": "Persistent Connection",
+          "definition": "An MCP server stays running throughout your session, maintaining its connection and authentication state."
+        },
+        {
+          "term": "Tool Interface",
+          "definition": "The clean, named functions that an MCP server exposes. Instead of raw HTTP endpoints, you get descriptive tool names with defined parameters."
+        }
+      ],
+      "exercise": {
+        "instruction": "Which approach is better for each scenario?",
+        "inputType": "multi-select",
+        "choices": [
+          {
+            "text": "You query Notion daily for task updates → MCP server",
+            "correct": true
+          },
+          {
+            "text": "You need one API call to check the weather → Direct API call",
+            "correct": true
+          },
+          {
+            "text": "You want Claude to manage GitHub issues every session → Direct curl commands",
+            "correct": false
+          },
+          {
+            "text": "You want Claude to manage GitHub issues every session → MCP server",
+            "correct": true
+          },
+          {
+            "text": "You are testing a new API endpoint you just built → MCP server",
+            "correct": false
+          }
+        ],
+        "validation": {
+          "type": "multi-select",
+          "correctAnswers": [
+            0,
+            1,
+            3
+          ],
+          "errorMessage": "Think about which scenarios involve repeated use (MCP) vs one-off requests (direct API)."
+        }
+      }
+    }
+  },
+  {
+    "id": "mc-05-05",
+    "title": "Browsing the MCP Ecosystem",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "The MCP ecosystem is growing fast. There are hundreds of community-built MCP servers for popular services. Before you build your own, check what already exists. The main places to browse are the official MCP servers repository on GitHub (modelcontextprotocol/servers), the MCP directory websites, and npm.\n\nSome of the most popular MCP servers include: filesystem (read/write files anywhere), GitHub (issues, PRs, repos), Slack (messages, channels), Google Drive/Sheets (documents, spreadsheets), PostgreSQL/SQLite (database queries), Brave Search (web search), and Puppeteer (browser automation).\n\nWhen evaluating an MCP server, check three things: is it actively maintained (recent commits), does it have good documentation (clear setup instructions), and does it expose the specific tools you need.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Browse official MCP servers\n# https://github.com/modelcontextprotocol/servers\n\nnpm search @modelcontextprotocol\n\n# Popular servers:\n# @modelcontextprotocol/server-filesystem\n# @modelcontextprotocol/server-github\n# @modelcontextprotocol/server-postgres\n# @modelcontextprotocol/server-slack",
+        "annotation": "Start with the official repository for vetted servers. Community servers on npm vary in quality."
+      },
+      "exercise": {
+        "instruction": "Visit the MCP servers repository and find one MCP server useful for your workflow. Write which server you picked and why.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 30,
+          "errorMessage": "Tell us which server you found and why."
+        }
+      }
+    }
+  },
+  {
+    "id": "mc-05-06",
+    "title": "Configuring MCP in Settings",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "MCP servers are configured in your Claude Code settings file. The CLI command claude mcp add writes to this file, but you can also edit it directly for more control. The settings live in .claude/settings.json in your project root (project-level) or ~/.claude/settings.json (global). The mcpServers key holds all your server configurations.\n\nEach server entry has a name, a command to run, optional arguments, and optional environment variables. Environment variables are where you put API keys and tokens — never hardcode secrets in the command string.\n\nYou can also manage servers with scope flags. claude mcp add --scope project makes the server available only in the current project. claude mcp add --scope user makes it available globally.",
+      "codeExample": {
+        "language": "json",
+        "code": "{\n  \"mcpServers\": {\n    \"github\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"-y\",\n        \"@modelcontextprotocol/server-github\"\n      ],\n      \"env\": {\n        \"GITHUB_TOKEN\": \"ghp_your_token_here\"\n      }\n    },\n    \"postgres\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"-y\",\n        \"@modelcontextprotocol/server-postgres\",\n        \"postgresql://localhost:5432/mydb\"\n      ]\n    }\n  }\n}",
+        "annotation": "This configures two MCP servers: GitHub (with an auth token) and PostgreSQL (with a connection string). Both use npx."
+      },
+      "exercise": {
+        "instruction": "Open your .claude/settings.json and add at least one MCP server configuration. Run claude mcp list to confirm.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 10,
+          "errorMessage": "Paste the output of claude mcp list."
+        }
+      }
+    }
+  },
+  {
+    "id": "mc-05-07",
+    "title": "Building a Simple MCP Server",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "Sometimes no existing MCP server does what you need. Building your own is straightforward using the MCP SDK. An MCP server is a small program that declares a set of tools and handles requests for them. The SDK is available in TypeScript and Python — pick whichever language you are comfortable with.\n\nThe basic structure has three parts: create a server instance, define your tools (name, description, input schema, handler function), and start the server. Each tool handler receives the input parameters and returns a result. The SDK handles all the protocol communication — you just write the business logic.\n\nA minimal MCP server might have a single tool. Start small, get it working, then add more tools. The key is that each tool should do one thing well and have a clear description so Claude knows when to use it.",
+      "codeExample": {
+        "language": "typescript",
+        "code": "import { McpServer } from \"@modelcontextprotocol/sdk/server/mcp.js\";\nimport { StdioServerTransport } from \"@modelcontextprotocol/sdk/server/stdio.js\";\nimport { z } from \"zod\";\n\nconst server = new McpServer({\n  name: \"word-counter\",\n  version: \"1.0.0\"\n});\n\nserver.tool(\n  \"count_words\",\n  \"Count the number of words in a text string\",\n  { text: z.string().describe(\"The text to count words in\") },\n  async ({ text }) => ({\n    content: [{ type: \"text\", text: \"Word count: \" + text.split(/s+/).filter(Boolean).length }]\n  })\n);\n\nconst transport = new StdioServerTransport();\nawait server.connect(transport);",
+        "annotation": "This creates a minimal MCP server with one tool: count_words. It communicates over stdio, which is how Claude Code talks to local MCP servers."
+      },
+      "exercise": {
+        "instruction": "Create a simple MCP server with at least one custom tool. Register it with claude mcp add. Confirm it works.",
+        "inputType": "confirm"
+      }
+    }
+  },
+  {
+    "id": "mc-05-08",
+    "title": "Connecting MCP to Business Tools (Notion, Sheets, etc.)",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "The real power of MCP shows up when you connect Claude to the tools you actually use for work. Notion, Google Sheets, Slack, Linear, Jira — each has community MCP servers that turn Claude into a direct participant in your workflow. Instead of copying data between your AI and your tools, Claude reads and writes to them directly.\n\nA practical example: you add the Google Sheets MCP server and point it at a spreadsheet tracking your sales pipeline. Now you can ask Claude what deals closed this month, and it reads the sheet, analyzes the data, and gives you the answer.\n\nThe pattern is the same for every service: install the MCP server, provide authentication credentials, and start using natural language to interact with the service through Claude.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Connect Claude to Google Sheets\nclaude mcp add google-sheets -- npx -y @modelcontextprotocol/server-google-sheets\n\n# Connect Claude to Notion\nclaude mcp add notion -- npx -y @notionhq/mcp-server\n\n# Connect Claude to Slack\nclaude mcp add slack -- npx -y @anthropic/mcp-server-slack",
+        "annotation": "Each service needs its own authentication token. Set these as env vars in your MCP server config."
+      },
+      "exercise": {
+        "instruction": "Pick one business tool you use regularly. Connect its MCP server to Claude Code. Describe what service you connected and one task you used it for.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 30,
+          "errorMessage": "Describe which service you connected and what you did."
+        }
+      }
+    }
+  },
+  {
+    "id": "mc-05-09",
+    "title": "OAuth and Authentication Flows",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "Many MCP servers need authentication to access external services. The simplest method is API keys — you generate a key from the service dashboard and put it in the MCP server environment variables. But some services (especially Google, Microsoft, and enterprise tools) use OAuth, which is more complex.\n\nOAuth works like a valet key for your car. Instead of giving Claude your full account password, OAuth creates a limited-access token that can only do specific things. The flow usually goes: the MCP server opens a browser window, you log in to the service, you approve specific permissions, and the server receives a token. Claude Code has a built-in /mcp command that helps manage these OAuth flows.\n\nThe /mcp command shows the status of all your MCP servers, including authentication state. Always store tokens securely — in environment variables or the MCP server credential store, never in plain text files committed to git.",
+      "terminology": [
+        {
+          "term": "OAuth",
+          "definition": "Open Authorization — a standard that lets you grant limited access to your accounts without sharing your password."
+        },
+        {
+          "term": "API Key",
+          "definition": "A simple string credential that authenticates requests to an API. Easier to set up than OAuth but usually gives broader access."
+        },
+        {
+          "term": "Token Refresh",
+          "definition": "OAuth tokens expire after a set time. Refresh tokens let the MCP server get new access tokens without making you log in again."
+        },
+        {
+          "term": "/mcp Command",
+          "definition": "A built-in Claude Code slash command that shows MCP server status, manages OAuth flows, and helps troubleshoot connections."
+        }
+      ]
+    }
+  },
+  {
+    "id": "mc-05-10",
+    "title": "Security and Permissions",
+    "type": "quiz",
+    "xp": 10,
+    "bonusXp": 5,
+    "content": {
+      "explanation": "MCP tools go through the same permission system as every other Claude Code tool. When Claude wants to call an MCP tool, it asks for your approval first.\n\nSecurity with MCP requires thinking about two layers. Layer one: what can the MCP server access? A filesystem server pointed at your home directory can read everything — including SSH keys and credentials. Be specific about paths. Layer two: what can Claude do with the MCP tools? Even with permission, Claude should only do what you asked.\n\nBest practices: use the narrowest scope possible (one folder instead of your whole drive), never commit tokens to git, use project-scoped MCP servers instead of global ones when the server only applies to one project, and periodically review which MCP servers you have installed with claude mcp list.",
+      "terminology": [
+        {
+          "term": "Scope",
+          "definition": "The range of access an MCP server has. Narrow scope (one folder, read-only) is safer than broad scope (entire filesystem, read-write)."
+        },
+        {
+          "term": "Auto-approve",
+          "definition": "A permission setting that lets Claude use specific tools without asking each time. Use carefully — only for tools with low risk."
+        }
+      ],
+      "exercise": {
+        "instruction": "Which of the following are good security practices for MCP servers?",
+        "inputType": "multi-select",
+        "choices": [
+          {
+            "text": "Point the filesystem MCP server at your entire home directory",
+            "correct": false
+          },
+          {
+            "text": "Store API tokens in the env field of your MCP config, not in plain text files",
+            "correct": true
+          },
+          {
+            "text": "Use project-scoped MCP servers when a server only applies to one project",
+            "correct": true
+          },
+          {
+            "text": "Auto-approve all MCP tools to avoid interruptions",
+            "correct": false
+          },
+          {
+            "text": "Periodically review installed servers with claude mcp list and remove unused ones",
+            "correct": true
+          }
+        ],
+        "validation": {
+          "type": "multi-select",
+          "correctAnswers": [
+            1,
+            2,
+            4
+          ],
+          "errorMessage": "Think about the principle of least privilege."
+        }
+      }
+    }
+  },
+  {
+    "id": "mc-05-11",
+    "title": "Capstone: Connect Claude to One of Your Real Tools via MCP",
+    "type": "build",
+    "xp": 25,
+    "content": {
+      "explanation": "Time to put it all together. In this capstone, you will connect Claude Code to a real tool or service you use in your daily workflow — not a toy example, but something that will actually save you time.\n\nThe process is: identify the service, find or build an MCP server for it, configure authentication, test that the connection works, and then use it for a real task.\n\nDocument what you built: which service, which tools are exposed, how you authenticated, and what you used it for. This is the kind of integration that compounds — once it is set up, you will use it in every session.",
+      "exercise": {
+        "instruction": "Connect Claude to a real tool or service you use. Complete these steps:\n1. Choose a service (Notion, GitHub, Sheets, Slack, a database, or anything else)\n2. Install or build an MCP server for it\n3. Configure authentication\n4. Complete one real task through the MCP connection\n\nDescribe what you connected, how you set it up, and what real task you completed with it.",
+        "inputType": "textarea",
+        "steps": [
+          "Pick a service you use at least weekly",
+          "Find an existing MCP server or build one with the SDK",
+          "Add it to your Claude Code configuration with proper authentication",
+          "Verify the connection with claude mcp list",
+          "Complete one real, useful task through the MCP tools"
+        ],
+        "validation": {
+          "type": "length",
+          "min": 100,
+          "errorMessage": "Describe the full setup: which service, how you configured it, and what real task you completed."
+        }
+      }
+    }
+  }
+]

@@ -1,0 +1,24 @@
+node_modules/
+dist/
+build/
+.env
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Stray generator scripts
+_gen_*
+_write_*
+
+# Tool state
+.playwright-mcp/
+.serena/
+.superpowers/

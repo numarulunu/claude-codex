@@ -1,0 +1,348 @@
+[
+  {
+    "id": "sa-06-01",
+    "title": "What Subagents Are — Workers Claude Dispatches",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "A subagent is a separate Claude instance that the main Claude dispatches to handle a specific task. Think of it like a manager delegating work to team members. The main Claude (the one you are talking to) identifies that a piece of work can be done independently, spins up a subagent with clear instructions, and gets the result back when the subagent finishes.\n\nSubagents are useful because they get their own context window. If your main conversation is getting long and you need Claude to do a big research task, a subagent can handle it with a fresh, full context window. The main Claude stays focused on your conversation while the subagent does the heavy lifting.\n\nEach subagent runs with the same tools as the main Claude (Read, Edit, Bash, Grep, etc.) unless you restrict them. They can read files, search code, run commands — everything the main Claude can do. The difference is they operate independently with their own task, their own context, and their own focus.",
+      "terminology": [
+        {
+          "term": "Subagent",
+          "definition": "A separate Claude instance dispatched by the main Claude to handle a specific, scoped task independently."
+        },
+        {
+          "term": "Agent Tool",
+          "definition": "The built-in tool that Claude uses to dispatch subagents. It sends a prompt and configuration to create a new agent."
+        },
+        {
+          "term": "Context Window",
+          "definition": "The total amount of text a Claude instance can hold in memory. Each subagent gets its own fresh context window."
+        }
+      ]
+    }
+  },
+  {
+    "id": "sa-06-02",
+    "title": "Agent Types and When to Use Each",
+    "type": "quiz",
+    "xp": 10,
+    "bonusXp": 5,
+    "content": {
+      "explanation": "Not all subagents are created equal. Claude Code supports several agent types, each optimized for different kinds of work. The main types are: general-purpose (default, can do anything), Explore (optimized for fast codebase search and research), Plan (optimized for architecture and design thinking), and code-reviewer (focused on reviewing code changes).\n\nThe Explore agent is your go-to for research tasks. It is fast, uses a cheaper model by default, and is great at searching through large codebases. The Plan agent is slower and more thoughtful — use it when you need Claude to think through architecture, design a system, or create an implementation plan.\n\nThe general-purpose agent handles anything that does not fit neatly into the specialized types. The code-reviewer agent is specifically tuned to review diffs and provide feedback on code quality, bugs, and improvements.",
+      "terminology": [
+        {
+          "term": "Explore Agent",
+          "definition": "A fast, lightweight subagent optimized for searching codebases and answering research questions. Uses a cheaper model for speed."
+        },
+        {
+          "term": "Plan Agent",
+          "definition": "A thoughtful subagent optimized for architecture, design, and creating implementation plans. Uses a more capable model."
+        },
+        {
+          "term": "Code-Reviewer Agent",
+          "definition": "A subagent tuned for reviewing code changes, finding bugs, and suggesting improvements."
+        }
+      ],
+      "exercise": {
+        "instruction": "Match each task to the best agent type.",
+        "inputType": "multi-select",
+        "choices": [
+          {
+            "text": "Find all files that import a specific module → Explore agent",
+            "correct": true
+          },
+          {
+            "text": "Design the database schema for a new feature → Plan agent",
+            "correct": true
+          },
+          {
+            "text": "Review a pull request for bugs → General-purpose agent",
+            "correct": false
+          },
+          {
+            "text": "Review a pull request for bugs → Code-reviewer agent",
+            "correct": true
+          },
+          {
+            "text": "Refactor a function to be more efficient → General-purpose agent",
+            "correct": true
+          }
+        ],
+        "validation": {
+          "type": "multi-select",
+          "correctAnswers": [
+            0,
+            1,
+            3,
+            4
+          ],
+          "errorMessage": "Think about what each agent type is optimized for. Explore = research, Plan = design, Code-reviewer = reviewing diffs."
+        }
+      }
+    }
+  },
+  {
+    "id": "sa-06-03",
+    "title": "Dispatching Your First Subagent",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "You do not call subagents directly — Claude dispatches them when it determines a task would benefit from a separate agent. However, you can prompt Claude to use subagents by describing work that naturally fits delegation. Phrases like \"research how X works\" or \"search the codebase for all uses of Y\" often trigger Claude to dispatch an Explore agent.\n\nWhen Claude dispatches a subagent, you will see it in your terminal. The Agent tool call appears with the prompt being sent to the subagent. The subagent works independently, and when it finishes, its result appears back in your conversation.\n\nFor your first try, ask Claude to research something in your codebase. This kind of broad research question is exactly what subagents excel at.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# In your Claude Code session, try prompts like:\n\n> Search the codebase and find all API endpoint definitions.\n> Tell me how authentication works in this project.\n\n# Claude will dispatch an Explore subagent automatically.\n# You will see: Agent(prompt=\"...\") in the tool calls.",
+        "annotation": "Claude decides when to use subagents based on the task. Research and search tasks almost always trigger an Explore agent."
+      },
+      "exercise": {
+        "instruction": "Open a Claude Code session in a real project and ask Claude to research something. Watch for the Agent tool call. Describe what you asked and what the subagent found.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 30,
+          "errorMessage": "Describe what you asked and what the subagent reported back."
+        }
+      }
+    }
+  },
+  {
+    "id": "sa-06-04",
+    "title": "Parallel vs Sequential Agent Work",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "When Claude has multiple independent tasks, it can dispatch several subagents at the same time — this is parallel execution. If the tasks depend on each other (task B needs the result of task A), Claude runs them one after another — this is sequential execution.\n\nParallel agents are powerful. If you ask Claude to search for three different things in your codebase, it can launch three Explore agents simultaneously instead of searching one thing at a time. The total time equals the slowest agent, not the sum of all three.\n\nSequential is necessary when one task depends on another. Claude handles this logic automatically — it figures out dependencies and parallelizes where possible.",
+      "terminology": [
+        {
+          "term": "Parallel Execution",
+          "definition": "Running multiple subagents at the same time when their tasks are independent of each other."
+        },
+        {
+          "term": "Sequential Execution",
+          "definition": "Running subagents one after another when a later task depends on the result of an earlier one."
+        },
+        {
+          "term": "Independence",
+          "definition": "Two tasks are independent when neither needs the result of the other to start. Independent tasks can be parallelized."
+        }
+      ]
+    }
+  },
+  {
+    "id": "sa-06-05",
+    "title": "The Explore Agent for Research",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "The Explore agent is the workhorse for codebase research. It is configured with a fast, cheap model (like Haiku) and given read-only tools — it can search and read files but cannot edit them or run commands. This makes it fast, safe, and cost-effective.\n\nTypical Explore agent tasks include: finding all files that match a pattern, understanding how a feature is implemented across multiple files, locating where a specific function is defined and used, and answering questions about how the codebase works.\n\nThe Explore agent excels at breadth. It can quickly scan hundreds of files and synthesize what it finds into a coherent summary. By delegating research to an Explore agent, the main Claude keeps its context clean and focused on your conversation.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Prompts that trigger Explore agents:\n\n> How is error handling done across this project?\n> Find all React components that use the useAuth hook.\n> What testing frameworks does this project use?",
+        "annotation": "Explore agents handle broad research questions by searching many files quickly. They return a summary to the main Claude."
+      },
+      "exercise": {
+        "instruction": "Ask Claude a broad research question about your codebase. Watch how it dispatches an Explore agent. Write what question you asked and the key findings.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 30,
+          "errorMessage": "Share the research question and what the Explore agent found."
+        }
+      }
+    }
+  },
+  {
+    "id": "sa-06-06",
+    "title": "The Plan Agent for Architecture",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "The Plan agent is designed for thinking work — architecture decisions, system design, implementation planning. Unlike the Explore agent which is fast and cheap, the Plan agent uses a more capable model and takes more time to produce thorough, well-reasoned output.\n\nUse the Plan agent when you need Claude to design something before building it. The Plan agent will research the codebase, consider constraints, and produce a structured plan with steps, trade-offs, and recommendations.\n\nThe Plan agent is also valuable for breaking down large tasks. Instead of asking Claude to build a complex feature in one shot, ask for a plan first. Review the plan, adjust it, and then execute it step by step. This two-phase approach (plan then execute) produces much better results than diving straight into code.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Prompts that benefit from a Plan agent:\n\n> Plan how to add user authentication to this Express app.\n> Design the database schema for a multi-tenant SaaS feature.\n> Create a step-by-step plan to refactor the payment module.",
+        "annotation": "Plan agents produce structured, thoughtful output. They take longer than Explore agents but deliver comprehensive architecture and design work."
+      },
+      "exercise": {
+        "instruction": "Ask Claude to plan or design something for your project. Describe what you asked for and summarize the plan it produced.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 40,
+          "errorMessage": "Describe the planning task and summarize the key points of the plan."
+        }
+      }
+    }
+  },
+  {
+    "id": "sa-06-07",
+    "title": "Background Agents — Fire and Forget",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "Background agents run without blocking your conversation. When Claude dispatches a background agent, it does not wait for the result — it continues talking to you immediately. The background agent works in the background, and you get notified when it finishes.\n\nThis is useful for long-running tasks that you do not need the answer to right away. For example, running the full test suite could take minutes. As a background agent, Claude sends it off and you keep working on other things.\n\nBackground agents are configured with run_in_background=true in the Agent tool. Claude decides when to use background mode based on the expected duration and whether you need the result immediately.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Prompts that work well as background agents:\n\n> Run all the tests in the background and report failures.\n> In the background, search for all TODO comments and categorize them.\n> Generate API documentation for all endpoints in the background.",
+        "annotation": "Background agents are fire-and-forget. Claude dispatches them and continues your conversation. Results appear when the agent finishes."
+      },
+      "exercise": {
+        "instruction": "Ask Claude to do a long-running task in the background. Continue your conversation while it works. Confirm that you received the background result.",
+        "inputType": "confirm"
+      }
+    }
+  },
+  {
+    "id": "sa-06-08",
+    "title": "Agent Isolation with Worktrees",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "By default, subagents share the same filesystem as the main Claude. This means if a subagent edits a file, you will see the change immediately. For some tasks this is fine, but for others you want isolation — the subagent should work in its own copy of the code without affecting your working directory.\n\nGit worktrees provide this isolation. A worktree is a separate checkout of your repository in a different directory. When Claude dispatches an agent with isolation=\"worktree\", it creates a fresh worktree, and the subagent does all its work there. Your main working directory stays untouched.\n\nWorktree isolation is essential for risky operations. If you ask a subagent to attempt a large refactoring, you do not want half-finished changes polluting your working directory if something goes wrong. With worktree isolation, the subagent can experiment freely, and you only pull in the changes if you like the result.",
+      "terminology": [
+        {
+          "term": "Git Worktree",
+          "definition": "A separate working directory linked to the same git repository. Changes in one worktree do not affect another until explicitly merged."
+        },
+        {
+          "term": "Isolation",
+          "definition": "Running a subagent in a separate environment so its file changes do not affect your main working directory."
+        },
+        {
+          "term": "worktree Mode",
+          "definition": "An agent configuration that creates a git worktree for the subagent to work in, providing filesystem isolation."
+        }
+      ]
+    }
+  },
+  {
+    "id": "sa-06-09",
+    "title": "Orchestration Patterns — Multi-Agent Workflows",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "Orchestration is how the main Claude coordinates multiple subagents to accomplish complex tasks. The simplest pattern is fan-out/fan-in: dispatch several agents in parallel, wait for all results, then synthesize them into a single answer.\n\nA more advanced pattern is pipeline: Agent A does research, its output feeds into Agent B which creates a plan, and the plan feeds into Agent C which executes. Each agent specializes in one phase.\n\nThe most complex pattern is iterative: an agent does some work, the main Claude reviews it, provides feedback, and dispatches another agent to refine the result. This loop continues until the output meets your standards.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Fan-out pattern: parallel research\n> Research these three things simultaneously:\n  1. How our auth system works\n  2. How our database migrations run\n  3. What CI/CD pipeline we use\n\n# Pipeline pattern\n> First research how payments work,\n  then plan subscription billing,\n  then implement the first step.\n\n# Iterative pattern\n> Write an API endpoint,\n  then review it for security issues,\n  then fix any issues found.",
+        "annotation": "These patterns emerge naturally from complex prompts. Claude chooses the right orchestration based on task dependencies."
+      },
+      "exercise": {
+        "instruction": "Give Claude a complex task requiring multiple steps. Describe the task and note how Claude orchestrated the subagents.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 40,
+          "errorMessage": "Describe the multi-step task and how Claude coordinated the subagents."
+        }
+      }
+    }
+  },
+  {
+    "id": "sa-06-10",
+    "title": "Agent Teams — Multiple Claudes in Parallel",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "Agent teams take parallelism to the next level. Instead of one Claude dispatching subagents, you can have multiple Claude instances working on different parts of a project simultaneously. This is an experimental feature.\n\nThe concept is simple: break a large project into independent workstreams, assign each workstream to a Claude instance, and let them work in parallel. Each instance gets its own worktree for isolation, so they do not step on each other. When all are done, you review and merge the results.\n\nAgent teams work best when tasks are truly independent. Building a frontend component, a backend API endpoint, and writing tests for both — these can happen in parallel because they touch different files.",
+      "terminology": [
+        {
+          "term": "Agent Team",
+          "definition": "Multiple Claude instances working on different parts of a project simultaneously, each in their own isolated environment."
+        },
+        {
+          "term": "Workstream",
+          "definition": "An independent piece of work that can be assigned to a single agent without requiring coordination with other agents."
+        },
+        {
+          "term": "Merge Conflicts",
+          "definition": "When two agents edit the same file differently, their changes conflict and must be resolved manually when merging."
+        }
+      ]
+    }
+  },
+  {
+    "id": "sa-06-11",
+    "title": "Model and Tool Restrictions per Subagent",
+    "type": "quiz",
+    "xp": 10,
+    "bonusXp": 5,
+    "content": {
+      "explanation": "You can configure which model and which tools each subagent uses. This matters for cost, speed, and safety. A research agent does not need the most expensive model — Haiku is fast and cheap for searching files. A planning agent benefits from a more capable model like Opus for deep thinking.\n\nTool restrictions add a safety layer. An Explore agent only needs Read and Grep — giving it Edit and Bash would be unnecessary and risky. By limiting tools, you reduce the blast radius if something goes wrong.\n\nThe model parameter accepts values like haiku for fast/cheap tasks, sonnet for balanced work, and opus for complex reasoning. The tools parameter specifies which tools the subagent can access.",
+      "terminology": [
+        {
+          "term": "Model Selection",
+          "definition": "Choosing which Claude model a subagent uses. Cheaper models (Haiku) are fast for simple tasks; capable models (Opus) are better for complex reasoning."
+        },
+        {
+          "term": "Tool Restriction",
+          "definition": "Limiting which tools a subagent can access. Fewer tools means faster, cheaper, and safer execution."
+        },
+        {
+          "term": "Blast Radius",
+          "definition": "The potential damage if something goes wrong. Restricting tools reduces blast radius by limiting what a subagent can do."
+        }
+      ],
+      "exercise": {
+        "instruction": "Which model and tool configuration makes sense for each scenario?",
+        "inputType": "multi-select",
+        "choices": [
+          {
+            "text": "Searching for all uses of a deprecated function → Haiku model, Read + Grep only",
+            "correct": true
+          },
+          {
+            "text": "Designing a new microservice architecture → Opus model, Read + Grep + Bash",
+            "correct": false
+          },
+          {
+            "text": "Designing a new microservice architecture → Opus model, Read + Grep only",
+            "correct": true
+          },
+          {
+            "text": "Writing and testing a new utility function → Sonnet model, Read + Edit + Bash",
+            "correct": true
+          },
+          {
+            "text": "Quick file search → Opus model, all tools",
+            "correct": false
+          }
+        ],
+        "validation": {
+          "type": "multi-select",
+          "correctAnswers": [
+            0,
+            2,
+            3
+          ],
+          "errorMessage": "Match the task complexity to the model and restrict tools to only what the task needs."
+        }
+      }
+    }
+  },
+  {
+    "id": "sa-06-12",
+    "title": "Capstone: Build a Multi-Agent Workflow for a Real Task",
+    "type": "build",
+    "xp": 25,
+    "content": {
+      "explanation": "In this capstone, you will design and execute a multi-agent workflow for a real task in your project. The workflow should involve at least two subagents and demonstrate the concepts from this module: agent types, parallel or sequential execution, and purposeful orchestration.\n\nGood candidates for multi-agent workflows: audit your codebase for security issues (Explore agents in parallel), then create a fix plan (Plan agent), then implement the top priority fixes (general agent). Or: research how three competitor libraries work (parallel Explore), then design which approach fits your project best (Plan).\n\nDocument the full workflow: what task you chose, how many agents were involved, what each agent did, whether they ran in parallel or sequence, and what the final result was.",
+      "exercise": {
+        "instruction": "Design and execute a multi-agent workflow for a real task. Your workflow should:\n1. Use at least 2 subagents\n2. Include at least one specialized agent type (Explore, Plan, or code-reviewer)\n3. Demonstrate parallel or sequential orchestration\n\nDescribe the full workflow: task, agents used, orchestration pattern, and results.",
+        "inputType": "textarea",
+        "steps": [
+          "Choose a real task that benefits from multiple agents",
+          "Identify which agent types and models to use",
+          "Prompt Claude to execute the multi-agent workflow",
+          "Observe how Claude orchestrates the agents",
+          "Document the workflow pattern and results"
+        ],
+        "validation": {
+          "type": "length",
+          "min": 100,
+          "errorMessage": "Describe the complete workflow: task, agents, orchestration, and outcome."
+        }
+      }
+    }
+  }
+]

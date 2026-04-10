@@ -1,0 +1,279 @@
+[
+  {
+    "id": "sp-04-01",
+    "title": "What Are Skills — Slash Commands That Expand",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "Skills are markdown files that act as reusable prompt templates. When you type a slash command like /deploy or /summarize-pr in Claude Code, the tool looks up the matching skill file, reads it, and expands its contents into a full prompt that Claude executes. The slash command is just a shortcut — behind it is a complete set of instructions written by you or someone else.\n\nThink of a skill as a recipe card. Instead of typing out a five-paragraph prompt every time you want Claude to review a pull request in a specific way, you write that prompt once as a skill file and invoke it with /review-pr. The skill file can include YAML frontmatter at the top (which controls behavior like whether to fork the conversation or use a subagent) and a markdown body (which is the actual prompt text Claude receives).\n\nSkills live in specific folders. Project-level skills go in .claude/commands/ inside your project root — these are available only when you are working in that project. Global skills go in ~/.claude/commands/ — these follow you across every project. When you type / and start typing a name, Claude Code autocompletes from both locations. If a project skill and a global skill share the same name, the project skill wins.",
+      "terminology": [
+        {
+          "term": "Skill",
+          "definition": "A markdown file with optional YAML frontmatter that expands into a full prompt when invoked via a slash command in Claude Code."
+        },
+        {
+          "term": "Slash Command",
+          "definition": "A shortcut that starts with / followed by the skill name. Typing /deploy invokes the skill file named deploy.md."
+        },
+        {
+          "term": "Frontmatter",
+          "definition": "A block of YAML metadata at the top of a markdown file, enclosed between --- lines. It controls how the skill behaves."
+        },
+        {
+          "term": "Prompt Template",
+          "definition": "A reusable set of instructions that can be invoked repeatedly without retyping. Skills are prompt templates with extra configuration."
+        }
+      ]
+    }
+  },
+  {
+    "id": "sp-04-02",
+    "title": "Built-In Skills vs Custom Skills",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "Claude Code ships with several built-in skills that come from official plugins. Commands like /commit, /review, and /simplify are not hardcoded into the CLI — they are skill files bundled with official plugins that Anthropic maintains. You can inspect them, learn from their structure, and even override them with your own versions if you want different behavior.\n\nCustom skills are ones you create yourself. They follow the exact same format as built-in skills — markdown files with optional YAML frontmatter — but they live in your .claude/commands/ folder (project-level) or ~/.claude/commands/ (global). There is no difference in how Claude processes them. A custom skill gets the same treatment as a built-in one. The only distinction is who wrote it and where it is stored.\n\nThis means you can extend Claude Code with any workflow you repeat. If you find yourself typing the same kind of prompt every day — like asking Claude to write a daily standup summary, or to deploy to staging with specific checks — that is a skill waiting to be written. The barrier to entry is low: create a markdown file, put it in the right folder, and it is immediately available as a slash command.",
+      "terminology": [
+        {
+          "term": "Built-in Skills",
+          "definition": "Skills that ship with official Claude Code plugins, like /commit, /review, and /simplify."
+        },
+        {
+          "term": "Custom Skills",
+          "definition": "Skills you create yourself, stored in .claude/commands/ (project) or ~/.claude/commands/ (global)."
+        },
+        {
+          "term": "Project-level Skills",
+          "definition": "Skills in .claude/commands/ that only work in that specific project. They override global skills with the same name."
+        }
+      ]
+    }
+  },
+  {
+    "id": "sp-04-03",
+    "title": "Anatomy of a Skill File",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "A skill file has two parts: the YAML frontmatter (optional but powerful) and the markdown body (the actual prompt). The frontmatter sits between two --- lines at the very top of the file. Below the closing ---, everything is the prompt that Claude receives when you invoke the skill.\n\nThe frontmatter controls metadata and behavior. The name field is the human-readable name shown in autocomplete. The description field explains what the skill does — Claude Code shows this when you browse available commands. The argument-hint field tells the user what argument the skill expects (like a file path or PR number). These three fields are the basics.\n\nThe body is where you write the actual instructions. This is plain markdown — you can use headers, bullet points, code blocks, bold text, anything. When the skill is invoked, Claude reads this body as if you typed it directly into the prompt. You can reference the argument passed by the user with $ARGUMENTS — this placeholder gets replaced with whatever the user typed after the slash command. For example, if your skill is invoked as /summarize-pr 142, then $ARGUMENTS becomes 142.",
+      "terminology": [
+        {
+          "term": "$ARGUMENTS",
+          "definition": "A placeholder in the skill body that gets replaced with whatever text the user types after the slash command."
+        },
+        {
+          "term": "YAML",
+          "definition": "A human-readable data format used for configuration. In skill files, it defines metadata like name, description, and behavior flags."
+        }
+      ],
+      "codeExample": {
+        "language": "markdown",
+        "code": "---\nname: summarize-pr\ndescription: Summarize a pull request by number\nargument-hint: <pr-number>\n---\n\nFetch pull request using the gh CLI.\n\nProvide a summary that includes:\n1. **What changed** — list the files modified and the nature of each change\n2. **Why it changed** — infer the purpose from commit messages and diff context\n3. **Risk areas** — flag any files that touch authentication, payments, or database migrations\n\nKeep the summary under 200 words. Use bullet points, not paragraphs.",
+        "annotation": "This skill file creates the /summarize-pr command. The frontmatter sets the name, description, and argument hint. The body is the prompt Claude executes. $ARGUMENTS is replaced with the PR number the user provides."
+      }
+    }
+  },
+  {
+    "id": "sp-04-04",
+    "title": "Writing Your First Skill",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "Time to create a real skill from scratch. You will write a skill that generates a daily standup summary by looking at your recent git commits and any modified files. This is a practical skill that many developers use daily — instead of manually checking your git log every morning, you invoke /daily-standup and get a formatted summary.\n\nThe process is straightforward: create the commands directory if it does not exist, write a markdown file with frontmatter and a prompt body, and test it by invoking the slash command. No compilation, no installation step. The moment the file exists in the right folder, Claude Code picks it up.\n\nPay attention to how you write the prompt body. Good skill prompts are specific and structured — they tell Claude exactly what to do, what format to use, and what to avoid. Vague prompts make for unreliable skills. Think of it like writing instructions for someone who is competent but has never seen your project before.",
+      "codeExample": {
+        "language": "markdown",
+        "code": "---\nname: daily-standup\ndescription: Generate a standup summary from recent git activity\n---\n\nRun git log --oneline --since=yesterday and git diff --stat HEAD~5.\n\n**Yesterday I:**\n- (list completed work based on commit messages)\n\n**Today I will:**\n- (suggest logical next steps)\n\n**Blockers:**\n- (note any failing tests or TODO/FIXME comments)\n\nKeep it concise — 3-5 bullets per section maximum.",
+        "annotation": "This skill runs git commands to inspect recent activity, then formats the results as a standard standup update."
+      },
+      "exercise": {
+        "instruction": "Create a daily standup skill file. Follow these steps:",
+        "inputType": "steps",
+        "steps": [
+          "Create .claude/commands/ in your project root.",
+          "Create daily-standup.md with YAML frontmatter and a prompt body.",
+          "Type /daily-standup in Claude Code.",
+          "Paste the output below."
+        ],
+        "validation": {
+          "type": "length",
+          "min": 30,
+          "errorMessage": "Paste the standup output Claude generated."
+        }
+      }
+    }
+  },
+  {
+    "id": "sp-04-05",
+    "title": "YAML Frontmatter Deep-Dive — context, agent, model, triggers",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "Beyond the basic name, description, and argument-hint fields, skill frontmatter has several advanced fields that control how and where the skill runs. The context field determines what happens to the conversation when the skill is invoked. Setting context: fork means the skill runs in a forked copy of the current conversation — it can see everything discussed so far, but its output does not pollute your main thread. Setting context: none means the skill starts with a blank context, ignoring the current conversation entirely. If you omit the field, the skill runs inline in your current conversation (the default).\n\nThe agent field controls whether the skill runs as a subagent. When set to agent: true or a specific agent type, Claude Code spawns a separate agent process to handle the skill. This is useful for complex skills that might run many tool calls — the subagent does its work independently and returns the result. The model field lets you override which Claude model runs the skill. You might want a cheaper, faster model for simple formatting tasks and the most capable model for complex code analysis.\n\nThe triggers field (available in some plugin configurations) allows skills to auto-invoke based on patterns — for example, automatically running a linting skill when a file is saved. Triggers turn skills from passive commands into active automation. Not all environments support triggers, but when available, they make skills significantly more powerful. Combined, these frontmatter fields give you fine-grained control over skill behavior without touching the prompt body.",
+      "terminology": [
+        {
+          "term": "context: fork",
+          "definition": "Runs the skill in a branched copy of the current conversation."
+        },
+        {
+          "term": "context: none",
+          "definition": "Runs the skill with a blank slate — no prior conversation context."
+        },
+        {
+          "term": "Subagent",
+          "definition": "A separate Claude process spawned to handle a skill independently."
+        },
+        {
+          "term": "Triggers",
+          "definition": "Patterns or events that automatically invoke a skill."
+        }
+      ],
+      "codeExample": {
+        "language": "markdown",
+        "code": "---\nname: deep-review\ndescription: Run a thorough code review of staged changes\ncontext: fork\nagent: true\nmodel: claude-sonnet-4-20250514\n---\n\nReview all staged changes (run git diff --cached).\n\nFor each file, analyze:\n1. Logic errors or bugs\n2. Security concerns (SQL injection, XSS, exposed secrets)\n3. Performance issues (N+1 queries, unnecessary re-renders)\n4. Naming and readability\n\nRate each file: PASS, WARN, or FAIL.\nEnd with an overall verdict and a list of required changes before merging.",
+        "annotation": "This skill forks the conversation (so the review does not clutter your working thread), runs as a subagent (so it can do heavy tool use independently), and uses Sonnet for cost efficiency. The prompt body defines a structured code review."
+      }
+    }
+  },
+  {
+    "id": "sp-04-06",
+    "title": "Skill Types — Rigid vs Flexible",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "Skills fall on a spectrum from rigid to flexible, and understanding where your skill sits determines how you write it. A rigid skill gives Claude very specific, step-by-step instructions with little room for interpretation. It specifies exact commands to run, exact output formats, and exact conditions. A flexible skill gives Claude a goal and constraints but lets it figure out the approach.\n\nRigid skills are best for repeatable workflows where consistency matters — deploying to production, generating changelogs, running a specific test suite. You want the same output every time, no creativity needed. Flexible skills are best for analysis and exploration — reviewing code, investigating bugs, brainstorming solutions. You want Claude to adapt its approach based on what it finds.\n\nMost real-world skills are a mix. The frontmatter is always rigid (it is configuration, not creativity). The prompt body usually has a rigid structure (numbered steps, required sections) with flexible content within those sections. The key mistake beginners make is writing skills that are too vague — a skill that just says review this code will produce inconsistent results. Even flexible skills need guardrails: specify what to look for, what format to use, and what to skip.",
+      "terminology": [
+        {
+          "term": "Rigid Skill",
+          "definition": "A skill with exact commands, exact output format, and no room for interpretation. Best for repeatable workflows like deployments or test runs."
+        },
+        {
+          "term": "Flexible Skill",
+          "definition": "A skill that gives Claude a goal and constraints but lets it figure out the approach. Best for analysis and exploration tasks."
+        },
+        {
+          "term": "Mixed Skill",
+          "definition": "A skill with rigid structure (numbered steps, required format) but flexible content within those sections. Most real-world skills are mixed."
+        }
+      ]
+    }
+  },
+  {
+    "id": "sp-04-07",
+    "title": "Installing and Managing Plugins",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "Plugins are bundles of skills, hooks, and sometimes agent configurations that you can install into Claude Code with a single command. They are like extensions for your IDE — someone packages up useful functionality, and you install it to get new slash commands and behaviors. Plugins can come from npm packages, GitHub repositories, or local directories.\n\nTo install a plugin, use the /plugins command inside Claude Code, or run claude plugins install <name> from your terminal. The plugin system downloads the package, registers its skills and hooks, and makes everything available immediately. You can list installed plugins with claude plugins list and remove them with claude plugins remove <name>. Plugins can be installed globally (available in all projects) or locally (available only in the current project).\n\nPlugin management is important because plugins can add hooks that run automatically — before commits, after file saves, or on session start. When you install a plugin, review what hooks it adds. Hooks are powerful but can be surprising if you do not know they are running. The claude plugins list --verbose command shows you exactly what each plugin provides: which skills, which hooks, and what permissions they require.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Install a plugin from npm\nclaude plugins install @anthropic-ai/claude-code-review\n\n# List all installed plugins with details\nclaude plugins list --verbose\n\n# Remove a plugin\nclaude plugins remove @anthropic-ai/claude-code-review\n\n# Install a plugin from a local directory (for development)\nclaude plugins install ./my-plugin/",
+        "annotation": "These commands show the full lifecycle of plugin management: install, inspect, and remove. The local directory install is useful when building your own plugin."
+      },
+      "exercise": {
+        "instruction": "Explore the plugin system in Claude Code. Follow these steps:",
+        "inputType": "steps",
+        "steps": [
+          "Open Claude Code and type /plugins to see the plugin management interface.",
+          "Run claude plugins list in your terminal to see what plugins are currently installed.",
+          "Note which skills and hooks each plugin provides.",
+          "Describe below what plugins you found installed and list at least two slash commands that come from plugins."
+        ],
+        "validation": {
+          "type": "length",
+          "min": 20,
+          "errorMessage": "Describe what you found in the plugin list."
+        }
+      }
+    }
+  },
+  {
+    "id": "sp-04-08",
+    "title": "Plugin Manifests — agents.json, hooks, distribution",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "A plugin is structured as a directory with a manifest and organized subdirectories. The manifest — typically a package.json with a claude-plugin field — declares what the plugin provides: its name, version, description, and which skills, hooks, and agents it bundles. This manifest is what Claude Code reads when installing the plugin to know what to register.\n\nInside the plugin directory, skills go in a skills/ folder (each one a markdown file with frontmatter), hooks go in a hooks/ folder (scripts that run on specific events), and agent configurations go in an agents/ folder. The manifest references these by path. Hooks declare their trigger event — like pre-commit, post-save, or session-start — and the script to execute.\n\nDistributing a plugin means publishing it somewhere others can install from — npm is the most common for public plugins, but you can also share plugins as GitHub repos or local directories. For team-internal plugins, a private npm registry or a shared Git repository works well. The key requirement is that the manifest is valid and all referenced files exist in the package.",
+      "terminology": [
+        {
+          "term": "Plugin Manifest",
+          "definition": "A JSON file (usually package.json with a claude-plugin field) that declares what skills, hooks, and agents the plugin provides."
+        },
+        {
+          "term": "Hook",
+          "definition": "A script that runs automatically on a specific event, like before a commit or when a session starts."
+        },
+        {
+          "term": "Agent Configuration",
+          "definition": "A JSON or YAML file that defines a custom agent type — its model, system prompt, and available tools — which skills can reference via the agent frontmatter field."
+        }
+      ],
+      "codeExample": {
+        "language": "markdown",
+        "code": "my-plugin/\n  package.json\n  skills/\n    deploy.md\n    rollback.md\n    health-check.md\n  hooks/\n    pre-commit-lint.sh\n    session-start-env-check.sh\n  agents/\n    deployment-agent.json",
+        "annotation": "This shows a complete plugin structure with three skills, two hooks, and one custom agent."
+      }
+    }
+  },
+  {
+    "id": "sp-04-09",
+    "title": "Building a Plugin with Multiple Skills",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "Building a plugin means organizing multiple related skills into a single installable package. The process is: create a directory, add a package.json manifest with the claude-plugin field, write your skill files in a skills/ subdirectory, and optionally add hooks. Once the structure is in place, you can install it locally with claude plugins install ./your-plugin/ to test.\n\nGood plugins are focused around a single workflow or domain. A deployment plugin bundles deploy, rollback, and health-check skills. A documentation plugin bundles generate-docs, update-changelog, and check-links skills. Avoid creating grab-bag plugins that mix unrelated skills — they become hard to maintain and confusing to users.\n\nWhen building, start with the skills first. Write them as standalone markdown files, test each one individually by placing it in .claude/commands/, and once they all work, move them into the plugin structure and write the manifest. This iterative approach catches problems early — a skill that does not work standalone will not magically work inside a plugin.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Create the plugin structure\nmkdir -p my-docs-plugin/skills\n\n# Create the manifest (see package.json example in lesson sp-04-08)\n# Then install locally to test\nclaude plugins install ./my-docs-plugin/",
+        "annotation": "This creates a minimal plugin structure and installs it locally for testing."
+      },
+      "exercise": {
+        "instruction": "Build a simple plugin that bundles two or more related skills. Follow these steps:",
+        "inputType": "steps",
+        "steps": [
+          "Choose a workflow domain (e.g., documentation, testing, deployment, code quality).",
+          "Create a plugin directory with a skills/ subdirectory.",
+          "Write at least two skill markdown files with proper YAML frontmatter and prompt bodies. Place them in skills/.",
+          "Create a package.json with a claude-plugin field that references your skill files.",
+          "Install the plugin locally using claude plugins install ./your-plugin/.",
+          "Test both skills by invoking their slash commands in Claude Code. Describe what happened below."
+        ],
+        "validation": {
+          "type": "length",
+          "min": 40,
+          "errorMessage": "Describe the plugin you built: what domain, what skills it includes, and what happened when you tested them."
+        }
+      }
+    }
+  },
+  {
+    "id": "sp-04-10",
+    "title": "Capstone: Create a Custom Skill for Your Daily Workflow",
+    "type": "build",
+    "xp": 25,
+    "content": {
+      "explanation": "This capstone pulls together everything from the module. You will identify a real, repetitive task in your daily workflow and build a production-quality skill for it. Not a toy example — something you will actually use tomorrow. The best skills save you 2-5 minutes every time they run, which compounds into hours saved per month.\n\nThink about prompts you type repeatedly. Do you start each session by asking Claude to check the status of your project? Do you regularly ask it to write commit messages in a specific format? Do you ask it to generate test files following a particular pattern? Any prompt you have typed more than three times is a skill waiting to happen.\n\nA production-quality skill has: clear frontmatter with name, description, and argument-hint (if it takes arguments); a well-structured prompt body with specific instructions and output format; appropriate use of context and agent fields if the task benefits from forking or subagent execution. It should handle edge cases in the prompt — tell Claude what to do if there are no git changes, if the file does not exist, or if the tests all pass. Defensive prompting makes reliable skills.",
+      "codeExample": {
+        "language": "markdown",
+        "code": "---\nname: preflight\ndescription: Run pre-merge checks before creating a pull request\ncontext: fork\nagent: true\n---\n\nRun a complete pre-merge check on the current branch.\n\n## Steps\n1. Run git diff main...HEAD --stat to list all changed files\n2. Run the project test suite (detect from package.json scripts or Makefile)\n3. Check for any TODO, FIXME, or HACK comments in changed files only\n4. Look for console.log, debugger, or print() statements in changed files\n5. Verify no .env, credentials, or secret files are staged\n\n## Output Format\n### Changed Files\n(list with line counts)\n\n### Test Results\n(pass/fail with summary)\n\n### Cleanup Needed\n(any debug statements, TODOs, or secrets found — or None found)\n\n### Verdict\nREADY TO MERGE or NEEDS ATTENTION (with specific items to fix)\n\nIf no changes exist compared to main, say so and stop.",
+        "annotation": "This is a production-quality skill: forked context, subagent execution, structured steps, defined output format, and an edge case handler. It replaces a 5-minute manual checklist."
+      },
+      "exercise": {
+        "instruction": "Build a custom skill for a real task in your daily workflow. This is your capstone — make it something you will genuinely use.",
+        "inputType": "steps",
+        "steps": [
+          "Identify a task you do repeatedly when working with code.",
+          "Write a skill file with complete YAML frontmatter: name, description, and optionally argument-hint, context, agent, and model fields.",
+          "Write a detailed prompt body with numbered steps, a defined output format, and at least one edge case handler.",
+          "Save the skill to .claude/commands/ (project) or ~/.claude/commands/ (global).",
+          "Test the skill by invoking it with its slash command. Run it at least twice to verify consistency.",
+          "Paste your complete skill file contents and describe how the output helped your workflow."
+        ],
+        "validation": {
+          "type": "length",
+          "min": 100,
+          "errorMessage": "This is the capstone — paste your full skill file contents (frontmatter + body) and describe the output you got."
+        }
+      }
+    }
+  }
+]

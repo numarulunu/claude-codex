@@ -1,0 +1,250 @@
+[
+  {
+    "id": "pe-02-01",
+    "title": "Why CLI Prompts Differ from Chat Prompts",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "When you use Claude on the web (claude.ai), your prompt is everything Claude knows. You paste text, maybe attach a file, and hope for the best. In Claude Code, the situation is completely different. Claude already has access to your entire project — every file, every folder, your git history, and any instructions you wrote in CLAUDE.md. Your prompt does not need to carry all the context because the tools carry it instead.\n\nThis changes how you write prompts. In chat, you might write a 500-word prompt that includes background, code snippets, file contents, and constraints all mashed together. In CLI, the same task might be a single sentence: \"refactor the auth middleware to use JWT instead of sessions.\" Claude can read the actual auth middleware file, check how sessions are used across the project, and understand the codebase structure — all from that one sentence.\n\nThe flip side is that CLI prompts need to be more precise about what action you want. Chat Claude can only give you text back. CLI Claude can read files, write files, run commands, search code, and more. A vague prompt like \"help me with my code\" gives Claude no direction on which tools to use. A good CLI prompt names the target: the file, the function, the behavior you want changed. Precision replaces length.",
+      "terminology": [
+        {
+          "term": "System Prompt",
+          "definition": "Hidden instructions that shape how Claude behaves before you type anything. In Claude Code, your CLAUDE.md files act as part of the system prompt."
+        },
+        {
+          "term": "Implicit Context",
+          "definition": "Information Claude can access through tools (like reading files) without you pasting it into your prompt. This is what makes CLI prompts shorter than chat prompts."
+        },
+        {
+          "term": "Tool-Aware Prompting",
+          "definition": "Writing prompts that account for Claude’s ability to take actions — reading, searching, editing, running commands — rather than just generating text."
+        }
+      ]
+    }
+  },
+  {
+    "id": "pe-02-02",
+    "title": "Structured Prompts — Task, Context, Constraints, Format",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "The most reliable way to get what you want from Claude Code is to structure your prompt into four parts: Task, Context, Constraints, and Format. You do not need to label them with headers every time — but hitting all four makes Claude nail it on the first try instead of the third.\n\nTask is what you want done: \"Add input validation to the signup form.\" Context is the relevant background: \"The form is in src/components/SignupForm.tsx and uses Zod for schema validation.\" Constraints are the boundaries: \"Do not change the existing form layout. Keep validation messages under 60 characters.\" Format is how you want the output: \"Show me the changed file with inline comments explaining each validation rule.\"\n\nHere is the difference in practice. A vague prompt: \"fix my form.\" Claude does not know which form, what is broken, or what \"fixed\" looks like. A structured prompt: \"Add email format validation to the signup form in src/components/SignupForm.tsx. Use the existing Zod schema pattern from LoginForm.tsx. Do not add any new dependencies. Show the diff only.\" Same task, completely different result. The structured version gives Claude a clear target, a reference pattern, a constraint, and an output format.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Vague prompt — Claude has to guess everything\n> fix my form validation\n\n# Structured prompt — Claude knows exactly what to do\n> Add email and password validation to src/components/SignupForm.tsx.\n> Use the Zod schema pattern from src/components/LoginForm.tsx as reference.\n> Password must be 8+ chars with one uppercase and one number.\n> Do not change the form layout or add new packages.\n> Show me the diff when done.",
+        "annotation": "The structured prompt covers all four parts: Task (add validation), Context (which files, which pattern), Constraints (password rules, no new packages), Format (show diff). Claude can execute this in one shot."
+      }
+    }
+  },
+  {
+    "id": "pe-02-03",
+    "title": "CLAUDE.md Architecture — Global vs Project Instructions",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "Claude Code reads instruction files from multiple locations and layers them together, like stacking transparent sheets on an overhead projector. Each layer adds more specific rules. The three layers are: global, project, and directory-level rules.\n\nThe global layer lives at ~/.claude/CLAUDE.md. Anything you write here applies to every project you open with Claude Code. This is where you put your personal preferences — coding style, language conventions, things you always want (or never want) Claude to do. For example: \"Always use TypeScript strict mode. Never use any as a type. Write tests for every new function.\"\n\nThe project layer lives at CLAUDE.md in your project root (right next to your package.json or similar). This file holds project-specific rules — the tech stack, folder structure, naming conventions, and important context about this particular codebase. Finally, you can create a .claude/rules/ directory in your project with multiple .md files for topic-specific rules (like one for testing, one for API design, one for database conventions). Claude reads all of them. When rules conflict, the more specific layer wins: project rules override global rules, and directory rules override project rules.\n\nThis architecture means you write your preferences once and they follow you everywhere. You never repeat \"use 2-space indentation\" in every prompt — it is in your global CLAUDE.md forever.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Global rules (apply to ALL projects)\ncat ~/.claude/CLAUDE.md\n# -> \"Use TypeScript. 2-space indent. No any types.\"\n\n# Project rules (apply to THIS project only)\ncat ./CLAUDE.md\n# -> \"This is a Next.js 15 app. Pages in app/. API in app/api/.\"\n\n# Directory-level topic rules\nls .claude/rules/\n# -> testing.md  api-design.md  database.md\n\ncat .claude/rules/testing.md\n# -> \"Use Vitest. Mock external APIs. 80% coverage minimum.\"",
+        "annotation": "Three layers: global (~/.claude/CLAUDE.md) for personal preferences, project (./CLAUDE.md) for codebase context, and .claude/rules/*.md for topic-specific rules. Claude reads all of them and merges the instructions."
+      },
+      "exercise": {
+        "instruction": "Create two CLAUDE.md files: a global one at ~/.claude/CLAUDE.md with 3 personal coding rules, and a project one at ./CLAUDE.md with 3 project-specific rules. Paste the contents of both files below.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 100,
+          "errorMessage": "Include the full contents of both CLAUDE.md files. Each should have at least 3 rules — your global preferences and your project-specific conventions."
+        }
+      }
+    }
+  },
+  {
+    "id": "pe-02-04",
+    "title": "Few-Shot Examples in CLI Context",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "Few-shot prompting means giving Claude examples of what you want before asking it to do the work. In a chat context, you paste the examples directly into your message. In Claude Code, you have a better option: put the examples in your CLAUDE.md or rules files so they apply permanently.\n\nThis is powerful for recurring patterns. Say you want every API endpoint to follow a specific structure — error handling first, then validation, then business logic, then response. Instead of explaining this in every prompt, you write one example in .claude/rules/api-design.md and Claude follows that pattern every time it writes an endpoint. The example is always in context, always available, without burning your prompt on repetition.\n\nYou can also use few-shot examples inline for one-off tasks. If you need Claude to generate data in a specific format, show it two or three examples and then say \"now generate 20 more like these.\" The key difference from chat: in CLI, you can point Claude at an existing file as the example. Instead of pasting code into your prompt, say \"follow the pattern in src/api/users.ts when creating the new endpoint.\" Claude reads the actual file, which is more accurate than pasting a snippet.",
+      "codeExample": {
+        "language": "markdown",
+        "code": "# In .claude/rules/api-design.md -- persistent few-shot example\n\n## API Endpoint Pattern\nEvery new API route must follow this structure:\n\n```typescript\nexport async function POST(req: Request) {\n  // 1. Parse and validate input\n  const body = await req.json();\n  const parsed = schema.safeParse(body);\n  if (!parsed.success) {\n    return Response.json({ error: parsed.error.flatten() }, { status: 400 });\n  }\n\n  // 2. Business logic\n  const result = await doTheThing(parsed.data);\n\n  // 3. Return response\n  return Response.json({ data: result }, { status: 201 });\n}\n```\n\nAlways validate before processing. Always return structured JSON.",
+        "annotation": "By putting this example in a rules file, every time Claude writes a new API endpoint, it follows this exact pattern. You never have to explain the structure again."
+      }
+    }
+  },
+  {
+    "id": "pe-02-05",
+    "title": "Controlling Output Format (JSON, Markdown, Code)",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "Claude Code can output its responses in any format you specify — JSON, Markdown tables, raw code, CSV, or anything else. The key is being explicit about what you want. If you do not specify a format, Claude picks whatever it thinks is helpful, which might not match what you need for your pipeline or workflow.\n\nFor JSON output, you have two approaches. In your prompt, you can describe the shape: \"Return a JSON object with keys: name (string), age (number), skills (array of strings).\" For even more control in non-interactive mode, Claude Code supports a --output-format flag that forces structured output. You can also define a JSON schema inline in your prompt to get exact types and required fields.\n\nThe format you choose depends on what consumes the output. If you are piping Claude’s response into another script, you want clean JSON with no extra commentary — tell Claude \"output only valid JSON, no explanation before or after.\" If you are reading the output yourself, Markdown tables or bullet lists are easier to scan. For code generation, specify the language, whether you want the full file or just the changed function, and whether to include comments. The more specific your format instruction, the less cleanup you do afterward.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Ask for JSON output with a specific schema\n> Read package.json and return a JSON object with:\n> { \"name\": string, \"version\": string, \"depCount\": number, \"devDepCount\": number }\n> Output only valid JSON, nothing else.\n\n# Ask for a Markdown table\n> List all React components in src/components/ as a Markdown table\n> with columns: File, Props Count, Has Tests (yes/no)\n\n# Non-interactive mode with piped output\nclaude -p \"List all TODO comments in this project as JSON array\" --output-format json",
+        "annotation": "Three different format requests. The JSON example specifies exact keys and types. The Markdown example asks for a table with defined columns. The non-interactive example uses --output-format for machine-readable output."
+      },
+      "exercise": {
+        "instruction": "Write a Claude Code prompt that asks Claude to analyze a project’s package.json and return a JSON object with these exact keys: projectName, version, totalDependencies, hasTypeScript (boolean), testFramework (string or null). Test it in Claude Code and paste the JSON result.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 50,
+          "errorMessage": "Paste the full JSON output from Claude Code. It should be a valid JSON object with all five required keys."
+        }
+      }
+    }
+  },
+  {
+    "id": "pe-02-06",
+    "title": "Chain-of-Thought Prompting in CLI",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "Chain-of-thought (CoT) prompting means asking Claude to think through a problem step by step before giving a final answer. In Claude Code, this is especially useful for complex debugging, architecture decisions, and code reviews where the reasoning matters as much as the result.\n\nClaude Code has a built-in version of this called extended thinking. When you add the word \"think\" to your prompt — as in \"think about how to restructure this database schema\" — Claude engages extended thinking mode. It spends more tokens reasoning before responding, which produces better results on complex tasks. You can also be more specific: \"think step by step about all the places this function is called and what would break if we changed the return type.\"\n\nNot every prompt needs chain-of-thought. Simple file edits, straightforward refactors, and well-defined tasks work fine with direct prompts. CoT shines when the task requires understanding relationships between multiple files, weighing tradeoffs, or diagnosing a bug with many possible causes. The rule of thumb: if a senior developer would need to stop and think about it for a few minutes, tell Claude to think too. If it is mechanical work, skip it and save the tokens.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Simple task -- no CoT needed\n> Rename the variable usr to currentUser across the auth module\n\n# Complex task -- CoT helps\n> Think step by step: the /api/checkout endpoint returns 500\n> intermittently. Read the route handler, the payment service it calls,\n> and the error logs from the last 3 days. Identify the root cause.\n\n# Architecture decision -- CoT essential\n> Think carefully about whether we should use a SQL database or\n> a document store for the analytics events. Consider write volume\n> (50k events/day), query patterns (time-range aggregations),\n> and our current Postgres setup. Give me a recommendation with reasoning.",
+        "annotation": "Three levels: a mechanical rename needs no thinking, a debugging task benefits from step-by-step reasoning, and an architecture decision requires deep analysis. Match your prompting strategy to the complexity."
+      }
+    }
+  },
+  {
+    "id": "pe-02-07",
+    "title": "Prompt Debugging — When Claude Misunderstands",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "Claude will misunderstand you. It is not a question of if, but when. The skill is diagnosing why it went wrong and fixing your prompt, not just retrying the same thing louder. There are four common reasons Claude misunderstands in CLI context, and each has a specific fix.\n\nFirst: conflicting CLAUDE.md rules. If your global CLAUDE.md says \"use Prettier with tabs\" and your project CLAUDE.md says \"use ESLint with spaces,\" Claude gets mixed signals. Check all your instruction files when output looks inconsistent. Second: context overflow. If you have been in a long session, earlier instructions may have been compacted away. Run /compact with a summary of what matters, or start a fresh session. Third: ambiguous references. \"Fix the component\" does not tell Claude which component. \"Fix the LoginForm submit handler\" does. Fourth: wrong assumption about project structure. Claude may be reading a different file than you think — ask it to show which files it read before making changes.\n\nThe fastest debugging technique is to ask Claude what it understood. Type: \"Before you do anything, tell me what you think I am asking for, which files you plan to change, and what the end result looks like.\" If the summary matches your intent, say \"proceed.\" If not, you have found the miscommunication before any damage was done. This \"confirm before execute\" pattern saves more time than any other prompting trick.",
+      "terminology": [
+        {
+          "term": "Context Overflow",
+          "definition": "When a conversation has used so many tokens that earlier messages get compressed or lost. Claude may forget instructions given earlier in the session."
+        },
+        {
+          "term": "Confirm Before Execute",
+          "definition": "A prompting pattern where you ask Claude to describe its plan before taking any action, catching misunderstandings before they become wrong edits."
+        },
+        {
+          "term": "Compaction",
+          "definition": "Claude Code’s process of summarizing earlier conversation to free up context window space. Run /compact to trigger it manually."
+        }
+      ]
+    }
+  },
+  {
+    "id": "pe-02-08",
+    "title": "Working with Large Files and Targeted Reads",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "One of the fastest ways to waste your context window is dumping entire large files into it. A 3,000-line file eats roughly 10,000 tokens — that is 5% of your context window gone on a single file. And most of the time, you only need 50 lines out of those 3,000. Learning to do targeted reads is one of the highest-leverage prompt engineering skills for CLI work.\n\nClaude Code’s Read tool supports offset and limit parameters, so you can read just lines 200-250 of a file. But you do not have to micromanage line numbers — that is what Grep is for. Use Grep to find the relevant section first, note the line numbers, then read just that section. For example: \"Search for the function handlePayment in src/services/payment.ts, then read just that function.\" Claude will Grep for the function name, find it starts at line 147, and Read from line 147 with a limit that covers the function body.\n\nYou can also direct Claude to be surgical in your prompts. Instead of \"read the database config,\" say \"find and read only the connection pool settings in the database config.\" Instead of \"look at the test file,\" say \"find the failing test for the checkout flow in the test file.\" The more targeted your instruction, the less context Claude wastes, and the more room you have for actual work in the rest of the session.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Bad: dumps the entire file into context\n> Read src/services/payment.ts\n\n# Good: targeted read of specific section\n> Find the handlePayment function in src/services/payment.ts\n> and read only that function. Do not read the whole file.\n\n# Even better: search first, read second\n> Grep for \"export async function\" in src/services/payment.ts\n> to show me all function signatures, then read just the\n> handleRefund function.",
+        "annotation": "The targeted approach saves thousands of tokens. Grep finds the location, Read pulls just the relevant lines. Your context window stays clean for actual problem-solving."
+      },
+      "exercise": {
+        "instruction": "Pick any file in your project that is longer than 100 lines. Write a Claude Code prompt that (1) uses search to find a specific function or section, and (2) reads only that section. Run it and paste the prompt and abbreviated output below.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 80,
+          "errorMessage": "Include both your prompt and the output showing Claude targeted a specific section rather than reading the whole file."
+        }
+      }
+    }
+  },
+  {
+    "id": "pe-02-09",
+    "title": "Multi-Turn Strategy — Continue, Compact, Branch, Rewind",
+    "type": "concept",
+    "xp": 10,
+    "content": {
+      "explanation": "A Claude Code session is not one prompt and one answer — it is a conversation. Managing that conversation well is a skill. Claude Code gives you four key commands for controlling the flow: /compact, /branch, /rewind, and knowing when to start fresh.\n\n/compact summarizes the conversation so far and frees up context space. Use it when you have finished one subtask and want to move to the next without leftover context cluttering things up. You can pass instructions to compact: \"/compact Keep the database schema decisions but forget the debugging tangent.\" This tells Claude what is still relevant. /branch creates a fork of your current conversation. Use it when you want to try an alternative approach without losing your current progress — like saving a game before a boss fight. If the branch does not work out, you still have the original.\n\n/rewind undoes your last turn (or multiple turns), rolling the conversation back to an earlier state. Use it when Claude went in a wrong direction and you want to rephrase your prompt without the failed attempt polluting context. Finally, sometimes the best move is to quit and start a new session. If your conversation is 50+ exchanges deep and Claude is getting confused, a fresh session with a clear first prompt often works better than trying to repair a long context. Think of /compact as tidying your desk, /branch as making a backup, /rewind as hitting undo, and a new session as getting a clean sheet of paper.",
+      "terminology": [
+        {
+          "term": "/compact",
+          "definition": "Summarizes the conversation to free up context window space. You can add instructions to control what gets kept vs. forgotten."
+        },
+        {
+          "term": "/branch",
+          "definition": "Creates a parallel fork of the conversation. Useful for trying alternative approaches without losing current progress."
+        },
+        {
+          "term": "/rewind",
+          "definition": "Rolls back the conversation by one or more turns, undoing Claude’s last response and your last prompt."
+        },
+        {
+          "term": "Session Reset",
+          "definition": "Closing the current Claude Code session and starting a new one. Gives you a completely fresh context window."
+        }
+      ]
+    }
+  },
+  {
+    "id": "pe-02-10",
+    "title": "Image and Screenshot Reading",
+    "type": "hands-on",
+    "xp": 15,
+    "content": {
+      "explanation": "Claude Code can read images — PNG, JPG, GIF, WebP — using the same Read tool it uses for text files. This is a multimodal capability: Claude sees the image visually and can describe, analyze, or act on what it sees. The most practical use case is debugging UI issues by sharing screenshots.\n\nSay your web app layout is broken on mobile. Instead of describing the problem in words (the button overlaps the header and the text is cut off), you can take a screenshot and say read this screenshot and fix the CSS to match the desktop layout. Claude sees the visual bug, understands the spatial relationship, and writes targeted CSS fixes. This works for any visual content: error dialogs, terminal output screenshots, design mockups, or even photos of whiteboard sketches.\n\nTo use this in practice, save or copy the image to a known path and tell Claude to read it. You can also pipe images from the clipboard or other tools. The key limitation is that Claude reads images as static snapshots — it cannot interact with a UI or watch animations. For dynamic issues, take multiple screenshots showing the before/during/after states. Also note that image tokens are more expensive than text tokens, so do not send 20 screenshots when 2 would show the problem clearly.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Read a screenshot to debug a UI issue\n> Read the screenshot at ~/Desktop/mobile-bug.png\n> The signup button should be below the form, not overlapping it.\n> Fix the CSS in src/components/SignupForm.module.css\n\n# Read an error dialog screenshot\n> Read ~/Desktop/error-screenshot.png and tell me what error\n> this is showing. Then find and fix the cause in our codebase.\n\n# Compare two screenshots\n> Read ~/Desktop/before.png and ~/Desktop/after.png.\n> The header looks different after my last CSS change.\n> Find what changed and revert just the header styling.",
+        "annotation": "Claude reads images visually and can act on what it sees. Screenshots are especially useful for UI bugs, error dialogs, and comparing visual states before and after a change."
+      },
+      "exercise": {
+        "instruction": "Take a screenshot of any UI element (your terminal, a website, an app). Save it as a PNG file. Write a Claude Code prompt that reads the screenshot and asks Claude to describe what it sees. Paste your prompt and Claude’s description below.",
+        "inputType": "textarea",
+        "validation": {
+          "type": "length",
+          "min": 60,
+          "errorMessage": "Include your prompt and Claude’s description of the screenshot. The description should show Claude actually analyzed the visual content."
+        }
+      }
+    }
+  },
+  {
+    "id": "pe-02-11",
+    "title": "Batch Operations — Same Prompt Across Multiple Files",
+    "type": "example",
+    "xp": 10,
+    "content": {
+      "explanation": "Sometimes you need to do the same thing to many files — add a license header, update an import path, convert class components to functions, or add error handling to every API route. Claude Code’s -p (or --print) flag lets you run a non-interactive prompt against your project, which means you can use shell loops to process files in batch.\n\nThe pattern is simple: write a shell loop that iterates over your target files and runs Claude with the -p flag for each one. Claude processes each file independently, applies your prompt, and moves to the next. This is faster than doing them one by one in an interactive session, and it keeps each operation in its own clean context.\n\nThere is also the approach of handling batch operations within a single interactive session. You can tell Claude: Apply the following change to every file in src/api/: add rate limiting middleware as the first handler. Process them one at a time and show me each diff. Claude will iterate through the files within the session. The tradeoff: shell loops give you isolation (each file gets fresh context), while the interactive approach lets Claude learn patterns from earlier files and apply them more consistently. For mechanical changes, use shell loops. For changes that require judgment, use the interactive approach.",
+      "codeExample": {
+        "language": "bash",
+        "code": "# Shell loop: add license header to every .ts file\nfor file in src/**/*.ts; do\n  claude -p \"Add this license header to the top of $file:\n// Copyright 2026 Acme Inc. MIT License.\n// See LICENSE for details.\nOnly output the modified file, no explanation.\" --output-format text\ndone\n\n# Single interactive prompt for batch with judgment\n> For every API route file in src/app/api/, add input validation\n> using the Zod schema pattern from src/app/api/users/route.ts.\n> Process each file one at a time. Show me the diff for each\n> and wait for my approval before moving to the next.\n\n# Non-interactive: analyze multiple files\nclaude -p \"List every React component in src/components/ that\n  does not have a corresponding .test.tsx file. Output as JSON array\n  of filenames.\" --output-format json",
+        "annotation": "Shell loops with -p flag give you isolated, repeatable operations. Interactive batch prompts give Claude context that carries over between files. Choose based on whether the task is mechanical or requires judgment."
+      }
+    }
+  },
+  {
+    "id": "pe-02-12",
+    "title": "Capstone: Build a CLAUDE.md System for Your Business",
+    "type": "build",
+    "xp": 25,
+    "content": {
+      "explanation": "Everything in this module comes together in one deliverable: a complete CLAUDE.md architecture for a real project. This is the single highest-impact thing you can build to improve your Claude Code experience. A well-designed instruction system means every session starts with Claude already knowing your preferences, your project rules, and the patterns you want followed.\n\nYou will create three layers: a global ~/.claude/CLAUDE.md with your personal coding and interaction preferences, a project-level ./CLAUDE.md with codebase-specific context and conventions, and a .claude/rules/ directory with topic-specific rule files. Each layer has a distinct purpose. Global is about you — your style, your standards, your non-negotiables. Project is about the codebase — the stack, the structure, the important files. Rules files are about specific domains — how to write tests, how to design APIs, how to handle errors.\n\nThe capstone is not about writing the perfect CLAUDE.md on the first try. It is about building the structure that you will evolve over time. As you work with Claude Code, you will notice patterns — things you keep repeating, mistakes Claude keeps making, conventions that drift. Each of those is a line to add to your instruction files. The best CLAUDE.md systems are living documents maintained by the people who use them every day.",
+      "exercise": {
+        "instruction": "Build a complete CLAUDE.md architecture for a project (real or hypothetical). Follow these steps:",
+        "inputType": "textarea",
+        "steps": [
+          "Choose a project -- either one you are working on or a hypothetical business project (e.g., an e-commerce app, a SaaS dashboard, a content platform).",
+          "Create ~/.claude/CLAUDE.md with at least 5 personal rules covering: coding style, language preferences, output format preferences, things Claude should always do, and things Claude should never do.",
+          "Create ./CLAUDE.md in the project root with: tech stack, folder structure, naming conventions, important files/paths, and at least 2 project-specific rules.",
+          "Create .claude/rules/ directory with at least 2 rule files (e.g., testing.md, api-design.md, code-style.md). Each file should have 3+ rules and at least one code example showing the expected pattern.",
+          "Write one few-shot example in one of your rules files -- show Claude what a correct implementation looks like in your project.",
+          "Test your system: start a Claude Code session and ask Claude to create a new feature. Verify it follows your rules without being reminded.",
+          "Paste all file contents below: global CLAUDE.md, project CLAUDE.md, and each rules file."
+        ],
+        "validation": {
+          "type": "length",
+          "min": 500,
+          "errorMessage": "The capstone requires substantial content. Include your global CLAUDE.md (5+ rules), project CLAUDE.md (stack, structure, conventions), and at least 2 rules files with examples. Total content should be significant."
+        }
+      }
+    }
+  }
+]
