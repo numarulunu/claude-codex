@@ -29,64 +29,24 @@
   {
     "id": "sp-04-02",
     "title": "Built-In Skills vs Custom Skills",
-    "type": "quiz",
+    "type": "concept",
     "xp": 10,
-    "bonusXp": 5,
     "content": {
       "explanation": "Claude Code ships with several built-in skills that come from official plugins. Commands like /commit, /review, and /simplify are not hardcoded into the CLI — they are skill files bundled with official plugins that Anthropic maintains. You can inspect them, learn from their structure, and even override them with your own versions if you want different behavior.\n\nCustom skills are ones you create yourself. They follow the exact same format as built-in skills — markdown files with optional YAML frontmatter — but they live in your .claude/commands/ folder (project-level) or ~/.claude/commands/ (global). There is no difference in how Claude processes them. A custom skill gets the same treatment as a built-in one. The only distinction is who wrote it and where it is stored.\n\nThis means you can extend Claude Code with any workflow you repeat. If you find yourself typing the same kind of prompt every day — like asking Claude to write a daily standup summary, or to deploy to staging with specific checks — that is a skill waiting to be written. The barrier to entry is low: create a markdown file, put it in the right folder, and it is immediately available as a slash command.",
-      "exercise": {
-        "instruction": "Choose the correct answer for each question about skills.",
-        "inputType": "multi-select",
-        "choices": [
-          {
-            "question": "Which of the following are built-in skills that ship with Claude Code plugins?",
-            "options": [
-              "/commit",
-              "/deploy",
-              "/review",
-              "/daily-standup",
-              "/simplify"
-            ],
-            "correct": [
-              "/commit",
-              "/review",
-              "/simplify"
-            ],
-            "feedback": "/commit, /review, and /simplify are official plugin skills. /deploy and /daily-standup are examples of custom skills you would create yourself."
-          },
-          {
-            "question": "Where do project-level custom skills live?",
-            "options": [
-              "~/.claude/commands/",
-              ".claude/commands/",
-              "node_modules/.claude/skills/",
-              ".claude/skills/"
-            ],
-            "correct": [
-              ".claude/commands/"
-            ],
-            "feedback": "Project-level skills go in .claude/commands/ inside your project root. The ~/.claude/commands/ path is for global skills that work across all projects."
-          },
-          {
-            "question": "What happens if a project skill and a global skill have the same name?",
-            "options": [
-              "The global skill wins",
-              "The project skill wins",
-              "Claude asks you which one to use",
-              "Both run sequentially"
-            ],
-            "correct": [
-              "The project skill wins"
-            ],
-            "feedback": "Project-level skills take priority over global skills with the same name. This lets you override global defaults on a per-project basis."
-          }
-        ],
-        "validation": {
-          "type": "quiz",
-          "passingScore": 2,
-          "errorMessage": "Review the explanation about built-in vs custom skills and where skill files are stored."
+      "terminology": [
+        {
+          "term": "Built-in Skills",
+          "definition": "Skills that ship with official Claude Code plugins, like /commit, /review, and /simplify."
+        },
+        {
+          "term": "Custom Skills",
+          "definition": "Skills you create yourself, stored in .claude/commands/ (project) or ~/.claude/commands/ (global)."
+        },
+        {
+          "term": "Project-level Skills",
+          "definition": "Skills in .claude/commands/ that only work in that specific project. They override global skills with the same name."
         }
-      }
+      ]
     }
   },
   {
@@ -177,70 +137,24 @@
   {
     "id": "sp-04-06",
     "title": "Skill Types — Rigid vs Flexible",
-    "type": "quiz",
+    "type": "concept",
     "xp": 10,
-    "bonusXp": 5,
     "content": {
       "explanation": "Skills fall on a spectrum from rigid to flexible, and understanding where your skill sits determines how you write it. A rigid skill gives Claude very specific, step-by-step instructions with little room for interpretation. It specifies exact commands to run, exact output formats, and exact conditions. A flexible skill gives Claude a goal and constraints but lets it figure out the approach.\n\nRigid skills are best for repeatable workflows where consistency matters — deploying to production, generating changelogs, running a specific test suite. You want the same output every time, no creativity needed. Flexible skills are best for analysis and exploration — reviewing code, investigating bugs, brainstorming solutions. You want Claude to adapt its approach based on what it finds.\n\nMost real-world skills are a mix. The frontmatter is always rigid (it is configuration, not creativity). The prompt body usually has a rigid structure (numbered steps, required sections) with flexible content within those sections. The key mistake beginners make is writing skills that are too vague — a skill that just says review this code will produce inconsistent results. Even flexible skills need guardrails: specify what to look for, what format to use, and what to skip.",
-      "exercise": {
-        "instruction": "Classify each skill description as rigid, flexible, or mixed.",
-        "inputType": "multi-select",
-        "choices": [
-          {
-            "question": "A skill that runs npm test, checks if all tests pass, and outputs either ALL CLEAR or a list of failures — nothing else.",
-            "options": [
-              "Rigid",
-              "Flexible",
-              "Mixed"
-            ],
-            "correct": [
-              "Rigid"
-            ],
-            "feedback": "This is rigid — exact commands, exact output format, no room for interpretation."
-          },
-          {
-            "question": "A skill that reads the current file and suggests improvements to code readability, explaining its reasoning.",
-            "options": [
-              "Rigid",
-              "Flexible",
-              "Mixed"
-            ],
-            "correct": [
-              "Flexible"
-            ],
-            "feedback": "This is flexible — Claude decides what to suggest and how to explain it."
-          },
-          {
-            "question": "A skill that runs specific git commands to collect data, then writes a changelog entry in a required format, but lets Claude decide how to categorize each change.",
-            "options": [
-              "Rigid",
-              "Flexible",
-              "Mixed"
-            ],
-            "correct": [
-              "Mixed"
-            ],
-            "feedback": "Mixed — the data collection and format are rigid but the categorization is flexible."
-          },
-          {
-            "question": "A skill with context: fork that explores a codebase to answer a user-provided question, with no constraints on format.",
-            "options": [
-              "Rigid",
-              "Flexible",
-              "Mixed"
-            ],
-            "correct": [
-              "Flexible"
-            ],
-            "feedback": "This is fully flexible — open-ended exploration with no prescribed steps or output format."
-          }
-        ],
-        "validation": {
-          "type": "quiz",
-          "passingScore": 3,
-          "errorMessage": "Review the difference between rigid and flexible skills."
+      "terminology": [
+        {
+          "term": "Rigid Skill",
+          "definition": "A skill with exact commands, exact output format, and no room for interpretation. Best for repeatable workflows like deployments or test runs."
+        },
+        {
+          "term": "Flexible Skill",
+          "definition": "A skill that gives Claude a goal and constraints but lets it figure out the approach. Best for analysis and exploration tasks."
+        },
+        {
+          "term": "Mixed Skill",
+          "definition": "A skill with rigid structure (numbered steps, required format) but flexible content within those sections. Most real-world skills are mixed."
         }
-      }
+      ]
     }
   },
   {
